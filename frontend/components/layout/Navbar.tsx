@@ -5,6 +5,7 @@ import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
+import { Logo } from '@/components/ui/Logo';
 
 export const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,11 +21,7 @@ export const Navbar = () => {
         <nav className="sticky top-0 z-50 w-full bg-bg-main/90 backdrop-blur-md">
             <Container className="flex h-20 items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <span className="text-2xl font-heading font-bold text-brand-dark tracking-tight">
-                        Snappy<span className="text-brand-orange">Yak</span>
-                    </span>
-                </Link>
+                <Logo />
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-8">

@@ -38,8 +38,8 @@ This SOP documents the authentication implementation for the SnappyYak Core appl
 backend/src/
 ├── main.rs       # Server initialization, route registration
 ├── auth.rs       # JWT creation, validation, middleware
-├── routes.rs     # API handlers (signup, login, me)
-├── models.rs     # Diesel models (User, NewUser)
+├── routes.rs     # API handlers (signup, login, me, change_password)
+├── models.rs     # Diesel models (User, NewUser, ChangePasswordRequest)
 ├── db.rs         # Database connection pool
 └── schema.rs     # Auto-generated Diesel schema
 ```
@@ -73,6 +73,18 @@ backend/src/
   2. Validate signature and expiration
   3. Return user info
 - **Output**: `{ user: { id, email } }`
+
+#### POST /api/auth/change-password
+- **Headers**: `Authorization: Bearer <token>`
+- **Input**: `{ current_password: string, new_password: string }`
+- **Process**:
+  1. Verify user authentication via JWT
+  2. Retrieve user from database
+  3. Verify current password with Argon2id
+  4. Validate new password (minimum 8 characters)
+  5. Hash new password with Argon2id
+  6. Update user record in database
+- **Output**: `{ message: "Password updated successfully" }` (or JSON error object)
 
 ### Frontend Integration
 - **AuthProvider**: `frontend/components/providers/AuthProvider.tsx`

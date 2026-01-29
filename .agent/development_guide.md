@@ -72,5 +72,9 @@ curl -X POST http://localhost:8080/api/auth/signup \
 
 ## Project Structure Notes
 - **Frontend Components**: Located in `frontend/components/`.
+  - `dashboard/`: Dashboard-specific components (e.g., `UserMenu.tsx`).
+  - `layout/`: Layout components (e.g., `Navbar.tsx`).
+  - `providers/`: Context providers (e.g., `AuthProvider.tsx`).
+  - `ui/`: Reusable UI components (e.g., `Logo.tsx`).
 - **Backend Models**: Defined in `backend/src/models.rs`.
 - **Backend Routes**: Defined in `backend/src/routes.rs`.

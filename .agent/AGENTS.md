@@ -2,7 +2,7 @@
 
 **Project**: SnappyYak Core Application  
 **Type**: Full-stack application with separate backend and frontend  
-**Last Updated**: 2026-01-29 (Auth upgrade to Argon2id, font fixes)
+**Last Updated**: 2026-01-29 (Password change, dashboard layout refactor, settings page, UI polish)
 
 ## Tech Stack
 
@@ -39,12 +39,16 @@ SnappyYak-Core/
 │   ├── app/              # App Router pages
 │   │   ├── auth/         # Login/Signup
 │   │   ├── dashboard/    # Protected dashboard
+│   │   │   ├── layout.tsx     # Shared sidebar & navigation
+│   │   │   ├── page.tsx       # Overview/Home dashboard
+│   │   │   └── settings/      # Personal settings page
 │   │   ├── layout.tsx    # Root layout
 │   │   └── page.tsx      # Home page
 │   ├── components/       # UI components
+│   │   ├── dashboard/    # Dashboard components (UserMenu)
 │   │   ├── layout/       # Navbar, Footer
 │   │   ├── sections/     # Hero, Features, etc.
-│   │   ├── ui/           # Button, Container
+│   │   ├── ui/           # Logo, Button, Container
 │   │   └── providers/    # AuthProvider
 │   └── public/           # Static assets
 └── legacy_vite_app/      # Archived Hono/Vite codebase
@@ -66,7 +70,8 @@ SnappyYak-Core/
 - `.agent/architecture.md` - If structure or design patterns change
 - `.agent/current_status.md` - Always update "Recently Completed" section
 - `.agent/project_overview.md` - If core features or tech stack change
-- `.agent/SOP/*.md` - If procedures or standards change
+- `.agent/SOP/frontend_design_system.md` - If design system changes
+- `.agent/SOP/backend_authentication_guide.md` - If auth implementation changes
 - `README.md` - If setup instructions or features change
 - Any other relevant docs in the workspace
 
@@ -84,6 +89,7 @@ SnappyYak-Core/
 - Sign JWTs with `JWT_SECRET` from environment variables
 - Use Diesel's type-safe query builders
 - Run `diesel migration run` after schema changes
+- **Password Change**: Validate current password before updating, hash new password with Argon2id
 
 ### Frontend (Next.js)
 - Use **'use client'** directive for components using hooks
@@ -91,7 +97,11 @@ SnappyYak-Core/
 - App Router pages must be default exports
 - Use **TypeScript** for all new files
 - Follow existing **Tailwind utility patterns**
+- **Routing**: Use Next.js `<Link>` component for internal navigation (never use `<a>` tags for internal routes)
+- **UX**: Authentication inputs (email) should use `autoFocus` on page load and provide re-focus on view transitions.
 - API calls go to `http://localhost:8080/api/*`
+- **Dashboard Layout**: All dashboard pages inherit from `dashboard/layout.tsx` with shared sidebar
+- **Active States**: Use `usePathname()` to highlight active navigation links
 
 ### Authentication
 - Protected routes check for JWT in `AuthProvider`
@@ -104,9 +114,11 @@ SnappyYak-Core/
 - **CRITICAL**: See `.agent/SOP/frontend_design_system.md` for mandatory design rules
 - **Design tokens** in `frontend/tailwind.config.ts`:
   - Colors: `brand-orange` (#EA580C), `brand-dark` (#132326)
+  - **CRITICAL**: ONLY use `brand-orange` and `brand-dark` for brand colors. DO NOT introduce additional brand colors (e.g., purple, blue) without explicit user approval.
   - Fonts: `font-heading` (Instrument Sans), `font-body` (Satoshi), `font-ui` (Satoshi)
 - **Font Loading**: Satoshi MUST be loaded via Fontshare CDN in `layout.tsx`
 - **DO NOT** add Next.js font optimization classes to `<body>` tag
+- **MANDATORY**: Use the `<Logo />` component from `components/ui/Logo.tsx` for all brand logo instances. DO NOT implement the logo manually with text/links.
 - Use existing components from `components/ui/` before creating new ones
 - Mobile-first responsive design (md:, lg: breakpoints)
 

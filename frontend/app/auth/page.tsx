@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { Logo } from '@/components/ui/Logo';
 
 function AuthContent() {
     const router = useRouter();
@@ -17,10 +18,19 @@ function AuthContent() {
     // Simple state to handle form interaction
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const { login } = useAuth();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const emailRef = useRef<HTMLInputElement>(null);
+
+    // Auto-focus the email field whenever mode changes
+    useEffect(() => {
+        if (emailRef.current) {
+            emailRef.current.focus();
+        }
+    }, [mode]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,9 +64,7 @@ function AuthContent() {
         <div className="min-h-screen bg-bg-main flex flex-col font-body">
             <nav className="p-6 absolute top-0 left-0 w-full z-10">
                 <Container>
-                    <Link href="/" className="text-2xl font-bold font-heading text-brand-dark hover:opacity-80 transition-opacity w-fit block">
-                        SnappyYak
-                    </Link>
+                    <Logo />
                 </Container>
             </nav>
 
@@ -89,18 +97,29 @@ function AuthContent() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
                                     placeholder="name@company.com"
+                                    autoFocus
+                                    ref={emailRef}
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-brand-dark mb-2">Password</label>
-                                <input
-                                    type="password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
-                                    placeholder="••••••••"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
                             </div>
 
                             <Button fullWidth size="lg" disabled={isLoading}>

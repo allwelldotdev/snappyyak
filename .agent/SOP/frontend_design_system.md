@@ -79,6 +79,13 @@ fontFamily: {
 
 ## Color Palette
 
+### ⚠️ COLOR POLICY (CRITICAL)
+**ONLY `brand-orange` (#EA580C) and `brand-dark` (#132326) are approved for brand colors.**
+
+- **DO NOT** introduce additional brand colors (e.g., purple, blue, green) without explicit user approval.
+- **DO NOT** add custom colors to `tailwind.config.ts` unless the user explicitly requests them.
+- Stick to the defined palette below. If a design requires a different color, consult the user first.
+
 ### Brand Colors
 - **Primary Orange**: `#EA580C` (Tailwind: `brand-orange`)
 - **Dark**: `#132326` (Tailwind: `brand-dark`)
@@ -153,7 +160,19 @@ colors: {
 
 ---
 
-## Common Mistakes to Avoid
+---
+ 
+ ## Common Components
+ 
+ ### 1. Logo
+ - **File**: `frontend/components/ui/Logo.tsx`
+ - **Usage**: MANDATORY for all brand logo instances.
+ - **Properties**: Supports `className` for additional external styling (e.g., margins).
+ - **Behavior**: Automatically links to `/` and includes transition effects.
+ 
+ ---
+ 
+ ## Common Mistakes to Avoid
 
 ### ❌ DO NOT:
 1. Add Next.js font optimization to the `<body>` tag

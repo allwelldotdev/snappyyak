@@ -163,3 +163,78 @@ pub async fn me(auth_user: AuthUser) -> impl IntoResponse {
         }
     }))
 }
+
+pub async fn change_password(
+    State(pool): State<DbPool>,
+    auth_user: AuthUser,
+    Json(payload): Json<crate::models::ChangePasswordRequest>,
+) -> Result<impl IntoResponse, (StatusCode, Json<Value>)> {
+    let mut conn: Conn = pool.get().map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": e.to_string() })),
+        )
+    })?;
+
+    let user = users::table
+        .find(auth_user.user_id)
+        .first::<User>(&mut conn)
+        .optional()
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({ "error": e.to_string() })),
+            )
+        })?;
+
+    if let Some(user) = user {
+        // Verify current password
+        let parsed_hash = PasswordHash::new(&user.password).map_err(|_e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({ "error": "Invalid password hash in database" })),
+            )
+        })?;
+
+        if Argon2::default()
+            .verify_password(payload.current_password.as_bytes(), &parsed_hash)
+            .is_err()
+        {
+            return Err((
+                StatusCode::BAD_REQUEST,
+                Json(json!({ "error": "Incorrect current password" })),
+            ));
+        }
+
+        // Hash new password
+        let salt = SaltString::generate(&mut OsRng);
+        let argon2 = Argon2::default();
+        let new_password_hash = argon2
+            .hash_password(payload.new_password.as_bytes(), &salt)
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(json!({ "error": e.to_string() })),
+                )
+            })?
+            .to_string();
+
+        // Update password
+        diesel::update(users::table.find(auth_user.user_id))
+            .set(users::password.eq(new_password_hash))
+            .execute(&mut conn)
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(json!({ "error": e.to_string() })),
+                )
+            })?;
+
+        return Ok((StatusCode::OK, Json(json!({ "message": "Password updated successfully" }))));
+    }
+
+    Err((
+        StatusCode::NOT_FOUND,
+        Json(json!({ "error": "User not found" })),
+    ))
+}
