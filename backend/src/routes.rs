@@ -103,6 +103,8 @@ pub async fn signup(
     ))
 }
 
+const DUMMY_HASH: &str = "$argon2id$v=19$m=19456,t=2,p=1$voLGulSHQm6aDD+/HZDwSA$3xKrqcmLa6a6D+p8eKIawzICI36oozQUYzbjJfKA2iw";
+
 pub async fn login(
     State(pool): State<DbPool>,
     Json(mut payload): Json<NewUser>,
@@ -128,23 +130,29 @@ pub async fn login(
             )
         })?;
 
-    if let Some(user) = user {
-        let parsed_hash = PasswordHash::new(&user.password).map_err(|_e| {
-             (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({ "error": "Invalid password hash in database" })), 
-            )
-        })?; 
+    let (password_hash, user_id, user_email) = if let Some(user) = &user {
+        (user.password.as_str(), Some(user.id), Some(&user.email))
+    } else {
+        (DUMMY_HASH, None, None)
+    };
 
-       if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
-            let token = create_jwt(user.id, &user.email).map_err(|e| {
+    let parsed_hash = PasswordHash::new(password_hash).map_err(|_e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": "Invalid password hash configuration" })),
+        )
+    })?;
+
+    if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
+        if let (Some(id), Some(email)) = (user_id, user_email) {
+            let token = create_jwt(id, email).map_err(|e| {
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     Json(json!({ "error": e.to_string() })),
                 )
             })?;
             return Ok(Json(
-                json!({ "token": token, "user": { "id": user.id, "email": user.email } }),
+                json!({ "token": token, "user": { "id": id, "email": email } }),
             ));
         }
     }

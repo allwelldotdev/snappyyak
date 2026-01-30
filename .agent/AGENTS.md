@@ -163,6 +163,8 @@ SnappyYak-Core/
 - CORS configured for `http://localhost:3000` in development
 - No rate limiting implemented yet
 - No refresh tokens implemented yet
+- **Timing Attack Protection**: Login endpoint uses constant-time comparison for all authentication attempts
+
 
 ## Testing
 - **Backend**: Manual testing with curl or frontend integration

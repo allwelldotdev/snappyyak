@@ -62,3 +62,6 @@
 - **DevOps**:
   - Dockerize applications for easier deployment.
   - Set up CI/CD pipelines.
+
+## Recently Completed (Security Audit)
+- **Timing Attack Fix**: Refactored login endpoint to use constant-time password verification, preventing user enumeration.
