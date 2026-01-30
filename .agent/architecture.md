@@ -1,59 +1,73 @@
 # Architecture & File Structure
 
 ## Directory Structure
+The project is split into two distinct applications:
 
 ```
-homepage_build/
-├── src/
-│   ├── assets/          # Static assets (images, svg, etc.)
-│   ├── components/      # Reusable UI components
-│   ├── contexts/        # React Context providers (AuthContext)
-│   ├── pages/           # Route components (Home, Auth, Dashboard)
-│   ├── server/          # Backend code (Hono app)
-│   │   ├── db/          # Database schema and client
-│   │   └── index.ts     # API routes
-│   ├── utils/           # Helper functions and utilities
-│   ├── App.tsx          # Main application component & Routing definitions
-│   ├── main.tsx         # Application entry point
-│   └── index.css        # Global styles & Tailwind directives
-├── public/              # Publicly accessible files
-├── index.html           # HTML entry point
-├── package.json         # Dependencies and scripts
-├── drizzle.config.ts    # Drizzle ORM configuration
-├── sqlite.db            # SQLite database (gitignored)
-├── tailwind.config.js   # Tailwind CSS configuration
-├── tsconfig.json        # TypeScript configuration
-└── vite.config.ts       # Vite configuration (includes Hono plugin)
+SnappyYak-Core/
+├── backend/             # Rust Application (Axum + Diesel)
+│   ├── src/
+│   │   ├── main.rs      # Server entry point
+│   │   ├── auth.rs      # JWT & Auth middleware
+│   │   ├── db.rs        # Database connection pool
+│   │   ├── models.rs    # Diesel structs
+│   │   ├── routes.rs    # API Handlers
+│   │   └── schema.rs    # Auto-generated Diesel schema
+│   ├── migrations/      # SQL migrations
+│   ├── Cargo.toml       # Rust dependencies
+│   └── .env             # Backend secrets
+├── frontend/            # Next.js Application (React)
+│   ├── app/             # App Router pages
+│   │   ├── auth/        # Login/Signup page
+│   │   ├── dashboard/   # Protected Dashboard
+│   │   │   ├── layout.tsx     # Shared sidebar & navigation
+│   │   │   ├── page.tsx       # Overview/Home dashboard
+│   │   │   └── settings/      # Personal settings page
+│   │   ├── globals.css  # Global styles
+│   │   └── layout.tsx   # Root layout with AuthProvider
+│   ├── components/      # UI Components
+│   │   ├── dashboard/   # Dashboard-specific components (UserMenu)
+│   │   ├── layout/      # Layout components (Navbar)
+│   │   ├── providers/   # Context providers (AuthProvider)
+│   │   └── ui/          # Reusable UI components (Logo)
+│   ├── public/          # Static assets
+│   ├── tailwind.config.ts # Tailwind config
+│   └── package.json     # Frontend dependencies
+└── legacy_vite_app/     # Archived Hono/Vite codebase
 ```
 
 ## Routing Strategy
-The application uses **React Router DOM v7** for client-side routing.
+The application uses **Next.js App Router** for client-side routing.
 
 - **`/`**: Home Page - The main landing page.
-- **`/auth`**: Authentication Page - For user login/signup.
-- **`/dashboard`**: User Dashboard - Protected area (requires authentication).
-- **`/api/*`**: Backend API routes (handled by Hono server).
-
-Routing is defined in `src/App.tsx`. Protected routes use the `ProtectedRoute` component wrapper.
+- **`/auth`**: Authentication Page - For user login/signup (handles `?mode=login|signup`).
+- **`/dashboard`**: User Dashboard - Protected area (requires valid JWT).
+  - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
 
 ## Design System Implementation
 Styles are centrally managed via **Tailwind CSS**.
 
-- **Configuration**: `tailwind.config.js` defines the project's design tokens (colors, fonts, border radius).
-- **Global Styles**: `src/index.css` contains the `@tailwind` directives and any global CSS resets.
-- **Component Styling**: Utility classes are used directly in components. Complex logic can use `clsx` and `tailwind-merge`.
+- **Configuration**: `frontend/tailwind.config.ts` defines design tokens (colors, fonts, radii).
+- **Fonts**: 
+  - `Instrument Sans` (Google Fonts) for headings.
+  - `Satoshi` (Fontshare) for body text.
+  - `Satoshi` (Fontshare) for UI elements.
+- **Global Styles**: `frontend/app/globals.css` imports external fonts and sets base styles.
 
 ## Backend Architecture
-The backend runs **within the Vite dev server** using `@hono/vite-dev-server`.
+The backend is a standalone **Rust** application using the **Axum** framework.
 
-- **Entry Point**: `src/server/index.ts` - Hono app with `/api` base path
-- **Database**: SQLite file (`sqlite.db`) managed by Drizzle ORM
-- **Schema**: Defined in `src/server/db/schema.ts`
-- **Routes**:
-  - `POST /api/auth/signup` - User registration
-  - `POST /api/auth/login` - User authentication
-  - `GET /api/auth/me` - Session verification
+- **Server**: Runs on port `8080`.
+- **Database**: SQLite file managed by Diesel ORM.
+- **Authentication**: 
+  - JWT (JSON Web Tokens) for stateless sessions.
+  - `Argon2id` for password hashing.
+- **API Routes**:
+  - `POST /api/auth/signup`: Create user.
+  - `POST /api/auth/login`: Authenticate user.
+  - `GET /api/auth/me`: Validate session token.
+  - `POST /api/auth/change-password`: Update user password (requires valid JWT).
 
-## Entry Point
-- `index.html`: The mounting point for the React app.
-- `src/main.tsx`: Bootstraps the React app and wraps it with `BrowserRouter` and `AuthProvider`.
+## Integration
+- The Frontend communicates with the Backend via standard HTTP requests to `http://localhost:8080`.
+- CORS is configured on the Backend to allow requests from the Frontend (`http://localhost:3000`).

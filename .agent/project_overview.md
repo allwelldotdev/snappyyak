@@ -1,39 +1,92 @@
-# Project Overview: SnappyYak Homepage Build
+# Project Overview: SnappyYak Core Application
 
 ## Introduction
-This project is the frontend build for the SnappyYak homepage, designed to be a high-performance, visually appealing web application. It is built using modern web technologies to ensure scalability, maintainability, and a premium user experience.
+This project is the core application for SnappyYak, a privacy-first workforce productivity intelligence platform. It has been migrated from a Hono/Vite monolithic stack to a modern, performant architecture using Rust for the backend and Next.js for the frontend.
 
 ## Tech Stack
 
-### Core
-- **Framework**: React 18
-- **Build Tool**: Vite 5
-- **Language**: TypeScript 5
-- **Routing**: React Router DOM 7
+### Backend (Rust)
+- **Language**: Rust 1.93.0+
+- **Framework**: Axum 0.8 (async web framework)
+- **Database**: SQLite via Diesel ORM 2.2
+- **Auth**: JWT (jsonwebtoken) + Argon2id
+- **Runtime**: Tokio (async runtime)
+- **Middleware**: tower-http for CORS
 
-### Styling
-- **CSS Framework**: Tailwind CSS 3
-- **CSS Utils**: clsx, tailwind-merge (for dynamic class handling)
+### Frontend (Next.js)
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 3
+- **State Management**: React Context (AuthProvider)
 - **Icons**: lucide-react
+- **Utilities**: clsx, tailwind-merge
+
+## Architecture
 
 ### Backend
-- **Server**: Hono 4 (integrated via `@hono/vite-dev-server`)
-- **Database**: SQLite (better-sqlite3)
-- **ORM**: Drizzle ORM
-- **Authentication**: JWT (hono/jwt) + bcryptjs
+The backend is a standalone Rust application running on port 8080. It provides RESTful API endpoints for authentication and will expand to include productivity tracking features.
 
-### Code Quality
-- **Linting**: ESLint
-- **Formatter**: Prettier (implied usage standard)
+**Key Files**:
+- `main.rs`: Server initialization and routing
+- `auth.rs`: JWT middleware and authentication logic
+- `routes.rs`: API endpoint handlers
+- `models.rs`: Diesel database models
+- `db.rs`: Database connection pooling
 
-## Key Features (Current)
-- **Responsive Design**: Mobile-first approach using Tailwind's responsive modifiers.
+### Frontend
+The frontend is a Next.js application using the App Router pattern, running on port 3000. It communicates with the backend via standard HTTP requests.
+
+**Key Directories**:
+- `app/`: Page routes (Home, Auth, Dashboard)
+- `components/`: Reusable UI components
+- `public/`: Static assets
+
+## Key Features
+
+### Current Implementation
+- **Responsive Design**: Mobile-first approach with Tailwind breakpoints
 - **Custom Design System**:
-  - **Colors**: Custom brand palette (Orange, Dark) defined in `tailwind.config.js`.
-  - **Typography**: Instrument Sans (Headings), Inter (Body), Satoshi (UI).
-- **Routing**: Client-side routing set up for Home, Auth, and Dashboard pages.
-- **Authentication**: Full signup/login flow with JWT-based sessions and protected routes.
-- **Local Backend**: Hono server integrated into Vite dev server (single-port development).
+  - **Colors**: Brand orange (#EA580C), dark (#132326)
+  - **Typography**: Instrument Sans (headings), Satoshi (body & UI)
+- **Authentication**: Full JWT-based signup/login flow with protected routes
+- **Premium UI**: Restored original design with Hero, Features, Testimonials, Pricing sections
+- **Type Safety**: Rust backend ensures compile-time guarantees, TypeScript frontend
+
+### Planned Features
+- Real-time productivity tracking
+- Team workload balancing
+- Privacy-first screenshot management
+- Integration with project management tools
+
+## Migration Details
+
+### From
+- **Backend**: Hono 4 + Vite dev server
+- **Database**: SQLite + Drizzle ORM
+- **Frontend**: Vite + React 18
+
+### To
+- **Backend**: Rust + Axum + Diesel
+- **Database**: SQLite + Diesel ORM (same DB engine, different ORM)
+- **Frontend**: Next.js 16 + React 19
+
+### Why Migrate?
+1. **Performance**: Rust provides near-C performance with memory safety
+2. **Scalability**: Axum is built for handling high-concurrency workloads
+3. **Type Safety**: Diesel's compile-time query validation eliminates runtime DB errors
+4. **Production Ready**: Next.js is industry standard for production React apps
+
+## Development Workflow
+
+### Starting the Application
+1. **Backend**: `cd backend && cargo run`
+2. **Frontend**: `cd frontend && npm run dev`
+
+Both servers must run concurrently.
 
 ## Goal
-The primary goal is to create a seamless, engaging homepage that converts visitors, with a robust foundation for future expansion into a full web application with authentication and dashboard capabilities.
+Create a production-ready, privacy-first workforce intelligence platform with:
+- Seamless authentication flow
+- High-performance data processing
+- Premium user experience
+- Scalable architecture for future features

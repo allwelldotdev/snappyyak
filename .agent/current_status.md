@@ -1,40 +1,56 @@
 # Current Status
 
 ## Implemented Features
-- **Project Skeleton**: Initialized with Vite, React, and TypeScript.
-- **Styling Foundation**: Tailwind CSS configured with a custom design system (colors, fonts).
-- **Navigation**:
-  - `Navbar` component implemented (responsive).
-  - Client-side routing set up with `react-router-dom`.
-- **Pages**:
-  - **Home**: Main landing page structure.
-  - **Auth**: Full login/signup forms with real backend integration.
-  - **Dashboard**: User dashboard with session-based data display.
-- **Backend**:
-  - Hono server integrated into Vite dev server.
-  - SQLite database with Drizzle ORM.
-  - JWT-based authentication.
-  - API endpoints for signup, login, and session verification.
-- **Authentication**:
-  - `AuthContext` for global state management.
-  - `ProtectedRoute` component for route guards.
-  - Token persistence in localStorage.
-  - Logout functionality.
+- **Architecture Migration**: Successfully migrated from Hono/Vite to Rust/Next.js.
+- **Frontend (Next.js)**:
+  - **Design Restoration**: Fully restored premium design (colors, fonts, components).
+  - **Pages**: Home, Auth, and Dashboard implemented with App Router.
+  - **Auth Integration**: Client-side `AuthProvider` manages JWT storage and session state.
+- **Backend (Rust/Axum)**:
+  - **API**: Functional endpoints for `signup`, `login`, and `me`.
+  - **Database**: SQLite integration via Diesel with migrations.
+  - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
 
-## In Progress
-- None currently.
+## Recently Completed
+- **Security Upgrade**: Migrated from bcrypt to Argon2id for password hashing.
+- **Input Validation**: Added email validation and input trimming on auth endpoints.
+- **Error Handling**: Fixed frontend JSON parsing errors by ensuring all backend errors return proper JSON format.
+- **Design Consistency**: Corrected font loading to ensure Satoshi is active across the application.
+- **Auth User Experience**: Implemented auto-focus for the email field on initial load and mode toggling.
+- **Brand Consistency**: Created a reusable `Logo` component and unified its appearance across the landing page and authentication screens.
+- **Dashboard UI Refinements**:
+  - Replaced `<a>` tags with Next.js `<Link>` components for client-side routing.
+  - Implemented interactive `UserMenu` component with popup modal for user settings.
+  - Added nested Organization sub-menu with hover interactions.
+  - Repositioned user profile from header to sidebar bottom for cleaner layout.
+  - Fixed hover "dead zone" issue with padding-based bridge for smooth menu interactions.
+- **Password Change Functionality**:
+  - Implemented secure password change endpoint (`POST /api/auth/change-password`).
+  - Backend validates current password with Argon2id before hashing and updating new password.
+  - Frontend Personal Settings page with password change form, visibility toggles, and validation.
+- **Dashboard Layout Refactoring**:
+  - Created shared `dashboard/layout.tsx` to house sidebar and navigation consistently.
+  - Implemented dynamic active state highlighting for sidebar links using `usePathname()`.
+  - All dashboard pages now inherit layout automatically (Settings, Overview, etc.).
+- **Personal Settings Page**:
+  - Full-featured settings page under `/dashboard/settings` route.
+  - Password change form with client-side validation and server integration.
+  - Placeholder sections for Social Accounts and Two-Factor Authentication.
+- **UI Polish & Consistency**:
+  - Password toggle visibility in both auth page and settings page.
+  - Consistent padding/margin across all dashboard pages.
+  - Strict adherence to `brand-orange` and `brand-dark` color scheme (removed `brand-purple`).
+  - Active sidebar highlighting correctly reflects current page.
 
 ## Pending / Future Work
 - **Security Enhancements**:
-  - Move JWT secret to environment variable.
-  - Implement rate limiting on auth endpoints.
-  - Add CSRF protection.
-  - Consider httpOnly cookies instead of localStorage.
-- **Auth Features**:
-  - Email verification.
-  - Password reset flow.
-  - User roles/permissions.
-- **Testing**: Add unit and integration tests (Vitest/Jest).
-- **Optimizations**: Lazy loading for routes, image optimization.
-- **Production Deployment**: Configure for production environment.
-
+  - Implement refresh tokens.
+  - Add request rate limiting.
+  - Tighter CORS configuration for production.
+- **Features**:
+  - Email verification (placeholder exists).
+  - Real productivity data ingestion (currently mocked).
+  - User roles setup.
+- **DevOps**:
+  - Dockerize applications for easier deployment.
+  - Set up CI/CD pipelines.

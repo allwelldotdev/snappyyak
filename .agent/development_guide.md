@@ -3,58 +3,78 @@
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn
+- **Node.js** (v18+)
+- **Rust** (v1.93.0+)
+- **Diesel CLI** (`cargo install diesel_cli --no-default-features --features sqlite`)
 
-### Installation
-1. Clone the repository.
-2. Navigate to the project directory:
+### Installation & Setup
+
+#### 1. Backend (Rust)
+1. Navigate to `backend/`:
    ```bash
-   cd files/homepage_build
+   cd backend
    ```
-3. Install dependencies:
+2. Setup environment:
+   ```bash
+   # Create .env file with DATABASE_URL=sqlite://db.sqlite and JWT_SECRET=your_secret
+   ```
+3. Initialize Database:
+   ```bash
+   diesel migration run
+   ```
+
+#### 2. Frontend (Next.js)
+1. Navigate to `frontend/`:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-## Available Scripts
+## Running the App
 
-### `npm run dev`
-Starts the development server. Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+You need to run both the backend and frontend servers simultaneously.
 
-### `npm run build`
-Builds the app for production to the `dist` folder. It basically runs `tsc` (TypeScript compiler) and `vite build`.
+### Backend
+Start the Axum server:
+```bash
+# inside backend/
+cargo run
+```
+Runs on `http://localhost:8080`.
 
-### `npm run preview`
-Locally preview the production build.
-
-### `npm run lint`
-Runs ESLint to check for code quality issues.
+### Frontend
+Start the Next.js dev server:
+```bash
+# inside frontend/
+npm run dev
+```
+Runs on `http://localhost:3000`.
 
 ## Database Commands
 
-### `npx drizzle-kit push`
-Pushes schema changes from `src/server/db/schema.ts` to the SQLite database. Run this after modifying the database schema.
+### Diesel CLI
+- **Run Migrations**: `diesel migration run`
+- **Redo Migration**: `diesel migration redo`
+- **Create Migration**: `diesel migration generate <name>`
 
-### `npx drizzle-kit studio`
-Opens Drizzle Studio (web-based database viewer) to inspect and modify database contents.
+## API Testing
+You can interact with the Rust API directly:
 
-## Backend Development
-
-### API Routes
-All backend routes are defined in `src/server/index.ts` under the `/api` base path. The Hono server runs within the Vite dev server on the same port (5173).
-
-### Testing API Endpoints
-Use browser DevTools Network tab or `fetch()` in the console:
-```javascript
-fetch('/api/auth/signup', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email: 'test@example.com', password: 'password123' })
-}).then(r => r.json()).then(console.log)
+```bash
+# Test Signup
+curl -X POST http://localhost:8080/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"dev@example.com", "password":"password123"}'
 ```
 
-## Best Practices
-- **Components**: Keep components small and focused. Use the `src/components` directory.
-- **Styling**: Prefer Tailwind utility classes over custom CSS. Use `tailwind.config.js` for custom values.
-- **Committing**: Ensure `npm run lint` passes before committing.
+## Project Structure Notes
+- **Frontend Components**: Located in `frontend/components/`.
+  - `dashboard/`: Dashboard-specific components (e.g., `UserMenu.tsx`).
+  - `layout/`: Layout components (e.g., `Navbar.tsx`).
+  - `providers/`: Context providers (e.g., `AuthProvider.tsx`).
+  - `ui/`: Reusable UI components (e.g., `Logo.tsx`).
+- **Backend Models**: Defined in `backend/src/models.rs`.
+- **Backend Routes**: Defined in `backend/src/routes.rs`.

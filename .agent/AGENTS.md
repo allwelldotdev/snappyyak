@@ -1,135 +1,198 @@
 # AGENTS.md - AI Agent Instructions
 
-**Project**: SnappyYak Homepage  
-**Type**: Full-stack SPA with local backend  
-**Last Updated**: 2026-01-28
+**Project**: SnappyYak Core Application  
+**Type**: Full-stack application with separate backend and frontend  
+**Last Updated**: 2026-01-29 (Password change, dashboard layout refactor, settings page, UI polish)
 
 ## Tech Stack
 
-### Frontend
-- **Framework**: React 18 + TypeScript 5
-- **Build Tool**: Vite 5
-- **Routing**: React Router DOM v7
-- **Styling**: Tailwind CSS 3 (custom design system in `tailwind.config.js`)
-- **Icons**: lucide-react
-
 ### Backend
-- **Server**: Hono 4 (integrated via `@hono/vite-dev-server`)
-- **Database**: SQLite (via better-sqlite3)
-- **ORM**: Drizzle ORM
-- **Auth**: JWT (via hono/jwt) + bcryptjs for password hashing
+- **Language**: Rust (v1.93.0+)
+- **Framework**: Axum 0.8
+- **Database**: SQLite via Diesel ORM 2.2
+- **Auth**: JWT (jsonwebtoken crate) + Argon2id for password hashing
+- **Async Runtime**: Tokio
+- **Middleware**: tower-http (CORS)
+
+### Frontend
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS v3 (custom design system)
+- **Icons**: lucide-react
+- **Utilities**: clsx, tailwind-merge
 
 ## Project Structure
 
 ```
-src/
-├── components/       # Reusable UI components
-│   ├── layout/      # Navbar, Footer, etc.
-│   └── ui/          # Button, Container, etc.
-├── contexts/        # React Context providers (AuthContext)
-├── pages/           # Route components (Home, Auth, Dashboard)
-├── server/          # Backend code (Hono app)
-│   ├── db/          # Database schema and client
-│   └── index.ts     # API routes (/api/*)
-└── utils/           # Helper functions
+SnappyYak-Core/
+├── backend/              # Rust Application
+│   ├── src/
+│   │   ├── main.rs       # Server entry point
+│   │   ├── auth.rs       # JWT & auth middleware
+│   │   ├── db.rs         # Database connection pool
+│   │   ├── models.rs     # Diesel models
+│   │   ├── routes.rs     # API handlers
+│   │   └── schema.rs     # Auto-generated Diesel schema
+│   ├── migrations/       # SQL migrations
+│   └── Cargo.toml        # Rust dependencies
+├── frontend/             # Next.js Application
+│   ├── app/              # App Router pages
+│   │   ├── auth/         # Login/Signup
+│   │   ├── dashboard/    # Protected dashboard
+│   │   │   ├── layout.tsx     # Shared sidebar & navigation
+│   │   │   ├── page.tsx       # Overview/Home dashboard
+│   │   │   └── settings/      # Personal settings page
+│   │   ├── layout.tsx    # Root layout
+│   │   └── page.tsx      # Home page
+│   ├── components/       # UI components
+│   │   ├── dashboard/    # Dashboard components (UserMenu)
+│   │   ├── layout/       # Navbar, Footer
+│   │   ├── sections/     # Hero, Features, etc.
+│   │   ├── ui/           # Logo, Button, Container
+│   │   └── providers/    # AuthProvider
+│   └── public/           # Static assets
+└── legacy_vite_app/      # Archived Hono/Vite codebase
 ```
 
 ## Critical Rules
 
-### Code Style
-- Use **functional components** with hooks (no class components)
-- Prefer **named exports** over default exports for components
-- Use **TypeScript** for all new files
-- Follow existing **Tailwind utility patterns** (no inline styles)
+### 🚨 MANDATORY: Documentation Updates
+**AI agents MUST update documentation after every breaking change or significant implementation.**
 
-### Backend
+**When to Update:**
+- After any breaking change (API changes, auth changes, schema changes, etc.)
+- After implementing new features
+- After modifying core functionality
+- At the end of every user request that modifies code
+
+**What to Update:**
+- `.agent/AGENTS.md` - If tech stack, rules, or workflows change
+- `.agent/architecture.md` - If structure or design patterns change
+- `.agent/current_status.md` - Always update "Recently Completed" section
+- `.agent/project_overview.md` - If core features or tech stack change
+- `.agent/SOP/frontend_design_system.md` - If design system changes
+- `.agent/SOP/backend_authentication_guide.md` - If auth implementation changes
+- `README.md` - If setup instructions or features change
+- Any other relevant docs in the workspace
+
+**Verification:**
+- Before completing a task, ask: "Have I updated all relevant documentation?"
+- List which docs were updated and why in the final response
+
+### Backend (Rust/Axum)
 - All API routes **must** be under `/api` prefix
-- Use **try/catch** blocks in all async route handlers
-- Return **JSON responses** with appropriate status codes
-- Hash passwords with **bcryptjs** (salt rounds: 10)
-- Sign JWTs with the `JWT_SECRET` constant
+- Use proper error handling with `Result` types
+- **CRITICAL**: All errors **must** return JSON format (use `Json(json!({ "error": "message" }))`)
+- Hash passwords with **Argon2id** (use `argon2` crate, not bcrypt)
+- **Always sanitize input**: Call `.trim()` on user-provided strings
+- Validate email format (must contain '@') before processing
+- Sign JWTs with `JWT_SECRET` from environment variables
+- Use Diesel's type-safe query builders
+- Run `diesel migration run` after schema changes
+- **Password Change**: Validate current password before updating, hash new password with Argon2id
 
-### Database
-- Schema changes require running `npx drizzle-kit push`
-- Use Drizzle's `.get()` for single results, `.all()` for arrays
-- Always validate user input before DB operations
+### Frontend (Next.js)
+- Use **'use client'** directive for components using hooks
+- Prefer **named exports** over default exports for components
+- App Router pages must be default exports
+- Use **TypeScript** for all new files
+- Follow existing **Tailwind utility patterns**
+- **Routing**: Use Next.js `<Link>` component for internal navigation (never use `<a>` tags for internal routes)
+- **UX**: Authentication inputs (email) should use `autoFocus` on page load and provide re-focus on view transitions.
+- API calls go to `http://localhost:8080/api/*`
+- **Dashboard Layout**: All dashboard pages inherit from `dashboard/layout.tsx` with shared sidebar
+- **Active States**: Use `usePathname()` to highlight active navigation links
 
 ### Authentication
-- Protected routes **must** use `<ProtectedRoute />` wrapper
+- Protected routes check for JWT in `AuthProvider`
 - Store JWT in `localStorage` (key: `token`)
-- Use `useAuth()` hook to access auth state in components
+- Use `useAuth()` hook to access auth state
 - Logout clears token and redirects to `/auth`
+- Backend validates JWT using `AuthUser` extractor
 
 ### Styling
-- **Design tokens** are in `tailwind.config.js`:
-  - Colors: `brand-orange`, `brand-dark`, `bg-main`, `text-body`, `text-muted`
-  - Fonts: `font-heading` (Instrument Sans), `font-body` (Inter), `font-ui` (Satoshi)
-- Use existing components from `src/components/ui/` before creating new ones
-- Mobile-first responsive design (use `md:`, `lg:` breakpoints)
+- **CRITICAL**: See `.agent/SOP/frontend_design_system.md` for mandatory design rules
+- **Design tokens** in `frontend/tailwind.config.ts`:
+  - Colors: `brand-orange` (#EA580C), `brand-dark` (#132326)
+  - **CRITICAL**: ONLY use `brand-orange` and `brand-dark` for brand colors. DO NOT introduce additional brand colors (e.g., purple, blue) without explicit user approval.
+  - Fonts: `font-heading` (Instrument Sans), `font-body` (Satoshi), `font-ui` (Satoshi)
+- **Font Loading**: Satoshi MUST be loaded via Fontshare CDN in `layout.tsx`
+- **DO NOT** add Next.js font optimization classes to `<body>` tag
+- **MANDATORY**: Use the `<Logo />` component from `components/ui/Logo.tsx` for all brand logo instances. DO NOT implement the logo manually with text/links.
+- Use existing components from `components/ui/` before creating new ones
+- Mobile-first responsive design (md:, lg: breakpoints)
 
 ## Common Tasks
 
-### Adding a New API Endpoint
-1. Add route in `src/server/index.ts` under `app.post/get/etc`
-2. Validate input and return JSON
-3. Test with browser or `fetch()` from frontend
+### Adding a New Backend Endpoint
+1. Add handler function in `backend/src/routes.rs`
+2. Register route in `main.rs`
+3. Validate input and return `Json<T>`
+4. Test with frontend or curl
 
-### Adding a New Page
-1. Create component in `src/pages/`
-2. Add route in `src/App.tsx`
-3. Wrap in `<ProtectedRoute />` if auth required
+### Adding a New Frontend Page
+1. Create `page.tsx` in `app/[route]/`
+2. Use layout for shared components
+3. Add 'use client' if using hooks
+4. Protect with `useAuth()` if needed
 
 ### Database Schema Changes
-1. Update `src/server/db/schema.ts`
-2. Run `npx drizzle-kit push`
-3. Verify `sqlite.db` file updated
+1. Create migration: `diesel migration generate <name>`
+2. Edit `up.sql` and `down.sql` in migrations folder
+3. Run: `diesel migration run`
+4. Update `models.rs` if needed
+5. Verify `schema.rs` auto-updated
 
 ### Running the App
-- Dev server: `npm run dev` (starts on port 5173)
-- Build: `npm run build`
-- Lint: `npm run lint`
-
-## Known Issues & Solutions
-
-### Vite Config
-The `vite.config.ts` uses `@hono/vite-dev-server` to proxy API requests. The `exclude` array **must** include `/^(?!\/api).+/` to prevent Hono from intercepting frontend routes.
-
-### Database Location
-`sqlite.db` is created in the project root. Do **not** commit this file to git.
-
-### CORS
-Not an issue since frontend and backend run on the same port (5173) during development.
+**Backend**: `cd backend && cargo run` (port 8080)  
+**Frontend**: `cd frontend && npm run dev` (port 3000)
 
 ## File Naming Conventions
-- Components: PascalCase (e.g., `AuthContext.tsx`)
-- Utilities: camelCase (e.g., `formatDate.ts`)
-- Pages: PascalCase (e.g., `Dashboard.tsx`)
+- **Rust**: snake_case (e.g., `auth.rs`, `models.rs`)
+- **Next.js Pages**: lowercase (e.g., `page.tsx`, `layout.tsx`)
+- **Components**: PascalCase (e.g., `AuthProvider.tsx`, `Navbar.tsx`)
+- **Utilities**: camelCase (e.g., `cn.ts`)
+
+## Security Notes
+- **JWT_SECRET** stored in `backend/.env` (never commit)
+- Passwords hashed with **Argon2id** (memory-hard algorithm, never store plaintext)
+- **Input sanitization**: All user inputs are trimmed (`.trim()`) before processing
+- **Email validation**: Basic format check (must contain '@')
+- **Error responses**: All errors return JSON format to prevent frontend parsing issues
+- CORS configured for `http://localhost:3000` in development
+- No rate limiting implemented yet
+- No refresh tokens implemented yet
 
 ## Testing
-- Manual browser testing is currently the primary verification method
-- Focus on auth flows: signup → dashboard → logout → login
+- **Backend**: Manual testing with curl or frontend integration
+- **Frontend**: Browser testing, verify auth flows
+- Focus on: signup → dashboard → logout → login
 
 ## Dependencies Management
+
+### Backend (Rust)
+- Add dependencies in `Cargo.toml`
+- Run `cargo build` to install
+- Check for updates: `cargo outdated`
+
+### Frontend (Next.js)
 - Add production deps: `npm install <package>`
 - Add dev deps: `npm install -D <package>`
 - Check for updates: `npm outdated`
 
-## Security Notes
-- **JWT_SECRET** is hardcoded in `src/server/index.ts` - change before production
-- Passwords are hashed with bcryptjs (never store plaintext)
-- No rate limiting implemented yet
-- No CSRF protection implemented yet
-
 ## AI Agent Workflow
-1. **Read** `project_overview.md`, `architecture.md`, and `current_status.md` for context
+1. **Read** `project_overview.md`, `architecture.md`, and `current_status.md`
 2. **Check** `SOP/` for procedural guides
-3. **Review** `implementations/` for past feature implementations
+3. **Review** `implementations/` for past implementations
 4. **Follow** this file's rules when writing code
 5. **Update** documentation after significant changes
 
 ## Questions to Ask Before Coding
 - Does this change require a database migration?
 - Is this route protected or public?
-- Does this follow the existing design system?
-- Have I added proper error handling?
+- Does this follow the existing design system? (Check `SOP/frontend_design_system.md`)
+- Have I added proper error handling with JSON responses?
+- Have I sanitized user inputs (`.trim()`)?
 - Does this need to be documented in `.agent/`?
+- Do I need to restart the backend server?
+- Am I using Argon2id (not bcrypt) for password hashing?
