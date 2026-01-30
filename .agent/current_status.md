@@ -41,12 +41,20 @@
   - Consistent padding/margin across all dashboard pages.
   - Strict adherence to `brand-orange` and `brand-dark` color scheme (removed `brand-purple`).
   - Active sidebar highlighting correctly reflects current page.
+- **Auth Enhancements**:
+  - Implemented 'Forgot Password' placeholder flow with email input and success state using `forgot-password/page.tsx`.
+  - Added "Forgot password?" link to the main login form.
+  - Integrated generic OAuth buttons (Google & Slack) with specific UI styling (white bg, border) to the login/signup pages.
 
 ## Pending / Future Work
 - **Security Enhancements**:
   - Implement refresh tokens.
   - Add request rate limiting.
+  - Implement refresh tokens.
+  - Add request rate limiting.
   - Tighter CORS configuration for production.
+  - Implement actual OAuth logic (currently placeholders).
+  - Implement actual email sending for password reset.
 - **Features**:
   - Email verification (placeholder exists).
   - Real productivity data ingestion (currently mocked).

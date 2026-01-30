@@ -19,6 +19,7 @@ SnappyYak-Core/
 ├── frontend/            # Next.js Application (React)
 │   ├── app/             # App Router pages
 │   │   ├── auth/        # Login/Signup page
+│   │   │   └── forgot-password/ # Password reset placeholder
 │   │   ├── dashboard/   # Protected Dashboard
 │   │   │   ├── layout.tsx     # Shared sidebar & navigation
 │   │   │   ├── page.tsx       # Overview/Home dashboard
@@ -41,6 +42,7 @@ The application uses **Next.js App Router** for client-side routing.
 
 - **`/`**: Home Page - The main landing page.
 - **`/auth`**: Authentication Page - For user login/signup (handles `?mode=login|signup`).
+- **`/auth/forgot-password`**: Forgot Password Placeholder - Simple email input UI for future reset flow.
 - **`/dashboard`**: User Dashboard - Protected area (requires valid JWT).
   - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
 

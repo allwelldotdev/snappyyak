@@ -2,7 +2,7 @@
 
 **Project**: SnappyYak Core Application  
 **Type**: Full-stack application with separate backend and frontend  
-**Last Updated**: 2026-01-29 (Password change, dashboard layout refactor, settings page, UI polish)
+**Last Updated**: 2026-01-30 (Forgot Password placeholder, OAuth UI integration, UI alignment fixes)
 
 ## Tech Stack
 
@@ -38,6 +38,7 @@ SnappyYak-Core/
 ├── frontend/             # Next.js Application
 │   ├── app/              # App Router pages
 │   │   ├── auth/         # Login/Signup
+│   │   │   └── forgot-password/ # Password reset placeholder
 │   │   ├── dashboard/    # Protected dashboard
 │   │   │   ├── layout.tsx     # Shared sidebar & navigation
 │   │   │   ├── page.tsx       # Overview/Home dashboard

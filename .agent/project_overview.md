@@ -48,8 +48,11 @@ The frontend is a Next.js application using the App Router pattern, running on p
 - **Custom Design System**:
   - **Colors**: Brand orange (#EA580C), dark (#132326)
   - **Typography**: Instrument Sans (headings), Satoshi (body & UI)
-- **Authentication**: Full JWT-based signup/login flow with protected routes
-- **Premium UI**: Restored original design with Hero, Features, Testimonials, Pricing sections
+- **Authentication**: Full JWT-based signup/login flow with protected routes.
+- **Auth Enhancements**: 
+    - Placeholder 'Forgot Password' flow with email input and success states.
+    - Integrated Google and Slack OAuth placeholder buttons with branding icons.
+- **Premium UI**: Restored original design with Hero, Features, Testimonials, Pricing sections.
 - **Type Safety**: Rust backend ensures compile-time guarantees, TypeScript frontend
 
 ### Planned Features

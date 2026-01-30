@@ -116,64 +116,70 @@ export default function SettingsPage() {
                         </div>
 
                         <form onSubmit={handleSubmit} className="contents">
-                            <div className="relative">
+                            <div>
                                 <label className="block text-sm font-medium text-gray-500 mb-1">
                                     Current Password
                                 </label>
-                                <input
-                                    type={showCurrent ? "text" : "password"}
-                                    value={currentPassword}
-                                    onChange={(e) => setCurrentPassword(e.target.value)}
-                                    placeholder="Enter your current password"
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent placeholder:text-gray-400"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowCurrent(!showCurrent)}
-                                    className="absolute right-3 top-[34px] text-gray-400 hover:text-gray-600"
-                                >
-                                    {showCurrent ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
+                                <div className="relative">
+                                    <input
+                                        type={showCurrent ? "text" : "password"}
+                                        value={currentPassword}
+                                        onChange={(e) => setCurrentPassword(e.target.value)}
+                                        placeholder="Enter your current password"
+                                        className="w-full px-4 py-3 pr-11 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent placeholder:text-gray-400"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCurrent(!showCurrent)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 flex items-center justify-center"
+                                    >
+                                        {showCurrent ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="relative">
+                            <div>
                                 <label className="block text-sm font-medium text-gray-500 mb-1">
                                     New Password
                                 </label>
-                                <input
-                                    type={showNew ? "text" : "password"}
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    placeholder="Enter your new password"
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent placeholder:text-gray-400"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowNew(!showNew)}
-                                    className="absolute right-3 top-[34px] text-gray-400 hover:text-gray-600"
-                                >
-                                    {showNew ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
+                                <div className="relative">
+                                    <input
+                                        type={showNew ? "text" : "password"}
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        placeholder="Enter your new password"
+                                        className="w-full px-4 py-3 pr-11 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent placeholder:text-gray-400"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowNew(!showNew)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 flex items-center justify-center"
+                                    >
+                                        {showNew ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="relative">
+                            <div>
                                 <label className="block text-sm font-medium text-gray-500 mb-1">
                                     Retype New Password
                                 </label>
-                                <input
-                                    type={showRetype ? "text" : "password"}
-                                    value={retypePassword}
-                                    onChange={(e) => setRetypePassword(e.target.value)}
-                                    placeholder="Retype your new password"
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent placeholder:text-gray-400"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowRetype(!showRetype)}
-                                    className="absolute right-3 top-[34px] text-gray-400 hover:text-gray-600"
-                                >
-                                    {showRetype ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
+                                <div className="relative">
+                                    <input
+                                        type={showRetype ? "text" : "password"}
+                                        value={retypePassword}
+                                        onChange={(e) => setRetypePassword(e.target.value)}
+                                        placeholder="Retype your new password"
+                                        className="w-full px-4 py-3 pr-11 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent placeholder:text-gray-400"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowRetype(!showRetype)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 flex items-center justify-center"
+                                    >
+                                        {showRetype ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="pt-2">
