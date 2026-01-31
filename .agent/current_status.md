@@ -45,6 +45,18 @@
   - Implemented 'Forgot Password' placeholder flow with email input and success state using `forgot-password/page.tsx`.
   - Added "Forgot password?" link to the main login form.
   - Integrated generic OAuth buttons (Google & Slack) with specific UI styling (white bg, border) to the login/signup pages.
+  - Refactored "Edit Columns" modal to a right-aligned Popover in the Employees dashboard for better UX.
+  - Implemented functional column toggling using React state to dynamically show/hide table columns.
+  - Optimized table layout: prevented header/cell wrapping with `whitespace-nowrap`, restored specific column widths, and fixed horizontal stretching issues by removing hardcoded `min-w`.
+  - Introduced **Shadcn UI** (Radix-based) for advanced UI components like Popovers, maintaining design consistency with the brand theme.
+- **Dependency Cleanup**:
+  - Removed unused `framer-motion` and `class-variance-authority` npm dependencies.
+  - Deleted unused `Modal.tsx` component (not imported anywhere).
+- **DateRangePicker Redesign**:
+  - Updated layout with CALENDAR header and "Employees' Time Zone" dropdown with globe icon.
+  - Added "Preset Filters" sidebar with 9 options (Today, Yesterday, This Week, Last 7 Days, etc.).
+  - Implemented active preset highlighting with violet background.
+  - Styled Cancel/Apply buttons with violet theme (border and filled variants).
 
 ## Pending / Future Work
 - **Security Enhancements**:
@@ -62,7 +74,6 @@
 - **Infrastructure & UI**:
     - Dockerize applications for easier deployment.
     - Set up CI/CD pipelines.
-    - Evaluate migration to RadixUI/Shadcn for advanced accessibility (see `.agent/implementations/ui_library_consideration.md`).
 
 ## Recently Completed (Security Audit)
 - **Timing Attack Fix**: Refactored login endpoint to use constant-time password verification, preventing user enumeration.

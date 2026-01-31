@@ -109,7 +109,6 @@ colors: {
   brand: {
     orange: '#EA580C',
     dark: '#132326',
-    purple: '#8B5CF6', // Approved accent color
   },
   bg: {
     main: '#FFFFFF',

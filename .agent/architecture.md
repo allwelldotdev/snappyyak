@@ -47,8 +47,9 @@ The application uses **Next.js App Router** for client-side routing.
   - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
 
 ## Design System Implementation
-Styles are centrally managed via **Tailwind CSS**.
+Styles are managed via **Tailwind CSS** with advanced accessible components provided by **Shadcn UI** (Radix-based).
 
+- **UI Components**: Reusable components like `Popover`, `Tooltip`, and `Button` are located in `frontend/components/ui/`, following the Shadcn pattern.
 - **Configuration**: `frontend/tailwind.config.ts` defines design tokens (colors, fonts, radii).
 - **Fonts**: 
   - `Instrument Sans` (Google Fonts) for headings.
