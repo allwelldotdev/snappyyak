@@ -59,9 +59,10 @@
   - Email verification (placeholder exists).
   - Real productivity data ingestion (currently mocked).
   - User roles setup.
-- **DevOps**:
-  - Dockerize applications for easier deployment.
-  - Set up CI/CD pipelines.
+- **Infrastructure & UI**:
+    - Dockerize applications for easier deployment.
+    - Set up CI/CD pipelines.
+    - Evaluate migration to RadixUI/Shadcn for advanced accessibility (see `.agent/implementations/ui_library_consideration.md`).
 
 ## Recently Completed (Security Audit)
 - **Timing Attack Fix**: Refactored login endpoint to use constant-time password verification, preventing user enumeration.
