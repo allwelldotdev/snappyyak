@@ -31,7 +31,7 @@ export default function DashboardLayout({
             {/* Sidebar */}
             <aside className="w-64 bg-brand-dark text-white hidden md:flex flex-col">
                 <div className="p-6">
-                    <div className="text-2xl font-bold font-heading text-brand-orange">SnappyYak</div>
+                    <Link href="/dashboard" className="text-2xl font-bold font-heading text-brand-orange">SnappyYak</Link>
                 </div>
                 <nav className="flex-1 px-4 space-y-2 mt-4">
                     {[

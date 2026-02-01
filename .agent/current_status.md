@@ -63,6 +63,20 @@
   - Added header with employee meta-data (Team, Email) and tabbed navigation (Timesheets, Schedules, Projects).
   - Implemented view toggles (Day/Shift) and filter controls.
   - Linked employee names in the dashboard table to their respective details pages.
+- **Employee Details Refactoring**:
+  - Refactored `/dashboard/employees/[id]` to use nested layout pattern.
+  - Created `employees/[id]/layout.tsx` for shared header (breadcrumbs, employee info, tabs).
+  - Converted tabs to route-based navigation using Next.js `Link` components.
+  - Restructured `page.tsx` to contain only Timesheets-specific content.
+  - Implemented `schedules/page.tsx` with calendar grid, controls toolbar, and legend.
+- **Schedules Page**:
+  - Implemented calendar grid with 7-column layout (Sun-Sat) and 210px minimum column width.
+  - Added horizontal scrolling with proper overflow structure (outer clips, inner scrolls).
+  - Styled date cells with dimmed previous/next month dates and bold current month dates.
+  - Created legend for "Shifts" (purple) and "Time Off" (gray).
+  - Replicated controls toolbar from Timesheets (date picker and filter button).
+- **Dashboard Navigation**:
+  - Made "SnappyYak" logo in sidebar a clickable link routing to `/dashboard`.
 - **Documentation**:
   - Added standard test credentials to `AGENTS.md` for future agentic workflows.
 

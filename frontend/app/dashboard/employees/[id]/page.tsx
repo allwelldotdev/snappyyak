@@ -1,28 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { Mail, Users, Filter, Download, Columns, Calendar as CalendarIcon, ChevronLeft } from 'lucide-react';
+import { Filter, Download, Columns, Calendar as CalendarIcon } from 'lucide-react';
 import { EmptyState } from '@/components/dashboard/EmptyState';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/utils';
-import { useParams } from 'next/navigation';
 
-export default function EmployeeDetailsPage() {
-
-
-    const params = useParams();
-    // Dynamic Name Handling (Performant: derived from params)
-    const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
-    const name = rawId ? rawId.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'Unknown Employee';
-    const email = 'UNKNOWN_EMAIL'; // As per user requirement for mock data
-
+export default function EmployeeTimesheetsPage() {
     // State
     const [viewMode, setViewMode] = useState<'day' | 'shift'>('day');
-
-    // Tabs
-    const TABS = ['Timesheets', 'Schedules', 'Projects'];
-    const [activeTab, setActiveTab] = useState('Timesheets');
 
     // Table Headers
     const TABLE_HEADERS = [
@@ -33,55 +19,6 @@ export default function EmployeeDetailsPage() {
 
     return (
         <div className="flex flex-col h-full">
-
-            {/* Header Section (Not Sticky) */}
-            <div className="bg-gray-50 pb-4 pt-1 mb-2">
-                {/* Breadcrumb / Back Link */}
-                <div className="mb-2">
-                    <Link href="/dashboard" className="text-xs font-medium text-gray-400 hover:text-brand-orange inline-flex items-center gap-1">
-                        <ChevronLeft className="w-3 h-3" />
-                        Employees
-                    </Link>
-                </div>
-
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold font-heading text-brand-dark mb-2">{name}</h1>
-                    <div className="flex items-center gap-6 text-sm text-gray-500 font-medium">
-                        <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-gray-400" />
-                            <span>Default team</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-gray-400" />
-                            <span className="uppercase">{email}</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Tabs */}
-                <div className="border-b border-gray-200">
-                    <div className="flex gap-8">
-                        {TABS.map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={cn(
-                                    "pb-3 text-sm font-medium transition-colors relative",
-                                    activeTab === tab
-                                        ? "text-brand-orange"
-                                        : "text-gray-500 hover:text-brand-dark"
-                                )}
-                            >
-                                {tab}
-                                {activeTab === tab && (
-                                    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-brand-orange" />
-                                )}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
             {/* Controls Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 {/* Left Controls */}

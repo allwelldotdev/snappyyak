@@ -22,7 +22,12 @@ SnappyYak-Core/
 │   │   │   └── forgot-password/ # Password reset placeholder
 │   │   ├── dashboard/   # Protected Dashboard
 │   │   │   ├── layout.tsx     # Shared sidebar & navigation
-│   │   │   ├── page.tsx       # Overview/Home dashboard
+│   │   │   ├── page.tsx       # Overview/Home dashboard (Employees table)
+│   │   │   ├── employees/[id]/   # Employee details (nested layout)
+│   │   │   │   ├── layout.tsx    # Shared header (breadcrumbs, tabs)
+│   │   │   │   ├── page.tsx      # Timesheets view
+│   │   │   │   └── schedules/    # Schedules calendar
+│   │   │   │       └── page.tsx  # Calendar grid with shifts/time-off
 │   │   │   └── settings/      # Personal settings page
 │   │   ├── globals.css  # Global styles
 │   │   └── layout.tsx   # Root layout with AuthProvider
@@ -43,7 +48,10 @@ The application uses **Next.js App Router** for client-side routing.
 - **`/`**: Home Page - The main landing page.
 - **`/auth`**: Authentication Page - For user login/signup (handles `?mode=login|signup`).
 - **`/auth/forgot-password`**: Forgot Password Placeholder - Simple email input UI for future reset flow.
-- **`/dashboard`**: User Dashboard - Protected area (requires valid JWT).
+- **`/dashboard`**: User Dashboard - Protected area (requires valid JWT). Shows employees table.
+  - **`/dashboard/employees/[id]`**: Employee Details - Nested layout with shared header and tabs.
+    - **`/dashboard/employees/[id]`** (default): Timesheets view with data table.
+    - **`/dashboard/employees/[id]/schedules`**: Schedules calendar with grid layout.
   - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
 
 ## Design System Implementation
