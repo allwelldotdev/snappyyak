@@ -57,11 +57,17 @@
   - Added "Preset Filters" sidebar with 9 options (Today, Yesterday, This Week, Last 7 Days, etc.).
   - Implemented active preset highlighting with violet background.
   - Styled Cancel/Apply buttons with violet theme (border and filled variants).
+- **Employee Details Page**:
+  - Created dynamic route `/dashboard/employees/[id]` matching the design mockups.
+  - Implemented `EmptyState` component with custom CSS/SVG illustration (sleepy computer).
+  - Added header with employee meta-data (Team, Email) and tabbed navigation (Timesheets, Schedules, Projects).
+  - Implemented view toggles (Day/Shift) and filter controls.
+  - Linked employee names in the dashboard table to their respective details pages.
+- **Documentation**:
+  - Added standard test credentials to `AGENTS.md` for future agentic workflows.
 
 ## Pending / Future Work
 - **Security Enhancements**:
-  - Implement refresh tokens.
-  - Add request rate limiting.
   - Implement refresh tokens.
   - Add request rate limiting.
   - Tighter CORS configuration for production.

@@ -19,7 +19,9 @@ function AuthContent() {
 
     // Simple state to handle form interaction
     const [email, setEmail] = useState('');
+    const [fullname, setFullname] = useState('');
     const [password, setPassword] = useState('');
+
     const [showPassword, setShowPassword] = useState(false);
 
     const { login } = useAuth();
@@ -44,10 +46,17 @@ function AuthContent() {
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, fullname: mode === 'signup' ? fullname : undefined }),
             });
 
-            const data = await res.json();
+            let data;
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(text || 'Authentication failed');
+            }
 
             if (!res.ok) {
                 throw new Error(data.error || 'Authentication failed');
@@ -90,6 +99,19 @@ function AuthContent() {
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
+                            {mode === 'signup' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-brand-dark mb-2">Full Name</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={fullname}
+                                        onChange={(e) => setFullname(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
+                                        placeholder="John Doe"
+                                    />
+                                </div>
+                            )}
                             <div>
                                 <label className="block text-sm font-medium text-brand-dark mb-2">Email Address</label>
                                 <input

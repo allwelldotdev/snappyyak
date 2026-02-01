@@ -42,7 +42,7 @@ export default function DashboardLayout({
                         { href: '/dashboard/settings', label: 'Settings', icon: Settings },
                     ].map((link) => {
                         const Icon = link.icon;
-                        const isActive = link.href === pathname || (link.href !== '/dashboard' && pathname.startsWith(link.href));
+                        const isActive = link.href === pathname || (link.href !== '/dashboard' && pathname.startsWith(link.href)) || (link.href === '/dashboard' && pathname.startsWith('/dashboard/employees/'));
 
                         return (
                             <Link

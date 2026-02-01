@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function SettingsPage() {
     const { user } = useAuth();
@@ -16,52 +17,84 @@ export default function SettingsPage() {
     const [newPassword, setNewPassword] = useState('');
     const [retypePassword, setRetypePassword] = useState('');
 
+    // Profile state
+    const [fullname, setFullname] = useState(user?.fullname || '');
+    const [initialFullname, setInitialFullname] = useState(user?.fullname || '');
+
+    // Update state when user loads
+    useEffect(() => {
+        if (user?.fullname) {
+            setFullname(user.fullname);
+            setInitialFullname(user.fullname);
+        }
+    }, [user]);
+
+    // Derived state
+    const isProfileDirty = fullname !== initialFullname;
+    const isPasswordDirty = !!currentPassword || !!newPassword || !!retypePassword;
+    const isDirty = isProfileDirty || isPasswordDirty;
+
     // Visibility toggles
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [showRetype, setShowRetype] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage(null);
         setIsLoading(true);
 
-        if (newPassword !== retypePassword) {
-            setMessage({ type: 'error', text: 'New passwords do not match' });
-            setIsLoading(false);
-            return;
-        }
-
-        if (newPassword.length < 8) {
-            setMessage({ type: 'error', text: 'Password must be at least 8 characters' });
-            setIsLoading(false);
-            return;
-        }
-
         try {
-            const res = await fetch('http://localhost:8080/api/auth/change-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    current_password: currentPassword,
-                    new_password: newPassword
-                })
-            });
+            // Update Profile (Fullname)
+            if (isProfileDirty) {
+                const res = await fetch('http://localhost:8080/api/auth/update-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ fullname })
+                });
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || 'Failed to update password');
+                if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || 'Failed to update profile');
+                }
+                setInitialFullname(fullname);
             }
 
-            setMessage({ type: 'success', text: 'Password updated successfully' });
-            // Clear fields
-            setCurrentPassword('');
-            setNewPassword('');
-            setRetypePassword('');
+            // Update Password
+            if (isPasswordDirty) {
+                if (newPassword !== retypePassword) {
+                    throw new Error('New passwords do not match');
+                }
+                if (newPassword.length < 8) {
+                    throw new Error('Password must be at least 8 characters');
+                }
+
+                const res = await fetch('http://localhost:8080/api/auth/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+
+                if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || 'Failed to update password');
+                }
+
+                setCurrentPassword('');
+                setNewPassword('');
+                setRetypePassword('');
+            }
+
+            setMessage({ type: 'success', text: 'Settings updated successfully' });
         } catch (err: any) {
             setMessage({ type: 'error', text: err.message });
         } finally {
@@ -91,31 +124,32 @@ export default function SettingsPage() {
                     <h2 className="text-lg font-bold text-brand-dark mb-6">Personal Info</h2>
 
                     <div className="grid gap-6 max-w-2xl">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">
-                                Full Name
-                            </label>
-                            <input
-                                type="text"
-                                value="Allwell" // Placeholder as per screenshot/context
-                                readOnly
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent text-brand-dark font-medium"
-                            />
-                        </div>
+                        {/* Full Name moved inside form */}
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">
-                                Email Address
-                            </label>
-                            <input
-                                type="email"
-                                value={user?.email || ''}
-                                readOnly
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-brand-dark font-bold"
-                            />
-                        </div>
+                        <form onSubmit={handleProfileUpdate} className="contents">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-500 mb-1">
+                                    Full Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={fullname}
+                                    onChange={(e) => setFullname(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent text-brand-dark font-medium"
+                                />
+                            </div>
 
-                        <form onSubmit={handleSubmit} className="contents">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-500 mb-1">
+                                    Email Address
+                                </label>
+                                <input
+                                    value={user?.email || ''}
+                                    readOnly
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-brand-dark font-bold cursor-not-allowed"
+                                />
+                            </div>
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-500 mb-1">
                                     Current Password
@@ -185,8 +219,11 @@ export default function SettingsPage() {
                             <div className="pt-2">
                                 <button
                                     type="submit"
-                                    disabled={isLoading || !currentPassword || !newPassword || !retypePassword}
-                                    className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    disabled={isLoading || !isDirty}
+                                    className={`px-6 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${isDirty
+                                        ? 'bg-brand-orange text-white hover:bg-orange-600'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
                                 >
                                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                                     Save changes

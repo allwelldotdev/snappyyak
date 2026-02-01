@@ -24,6 +24,7 @@ async fn main() {
         .route("/api/auth/signup", post(routes::signup))
         .route("/api/auth/login", post(routes::login))
         .route("/api/auth/me", get(routes::me))
+        .route("/api/auth/update-profile", post(routes::update_profile))
         .route("/api/auth/change-password", post(routes::change_password))
         .layer(CorsLayer::permissive())
         .with_state(pool);

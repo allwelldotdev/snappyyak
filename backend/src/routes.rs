@@ -27,8 +27,15 @@ pub async fn signup(
 ) -> Result<impl IntoResponse, (StatusCode, Json<Value>)> {
     // Sanitize input
     payload.email = payload.email.trim().to_string();
+    payload.fullname = payload.fullname.trim().to_string();
     
     // Basic validation
+    if payload.email.is_empty() || payload.fullname.is_empty() {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(json!({ "error": "Email and full name are required" })),
+        ));
+    }
     if !payload.email.contains('@') {
         return Err((
             StatusCode::BAD_REQUEST,
@@ -77,6 +84,7 @@ pub async fn signup(
 
     let new_user = NewUser {
         email: payload.email,
+        fullname: payload.fullname,
         password: password_hash,
     };
 
@@ -99,7 +107,7 @@ pub async fn signup(
 
     Ok((
         StatusCode::CREATED,
-        Json(json!({ "token": token, "user": { "id": user.id, "email": user.email } })),
+        Json(json!({ "token": token, "user": { "id": user.id, "email": user.email, "fullname": user.fullname } })),
     ))
 }
 
@@ -107,7 +115,7 @@ const DUMMY_HASH: &str = "$argon2id$v=19$m=19456,t=2,p=1$voLGulSHQm6aDD+/HZDwSA$
 
 pub async fn login(
     State(pool): State<DbPool>,
-    Json(mut payload): Json<NewUser>,
+    Json(mut payload): Json<crate::models::LoginRequest>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<Value>)> {
     // Sanitize input
     payload.email = payload.email.trim().to_string();
@@ -130,10 +138,10 @@ pub async fn login(
             )
         })?;
 
-    let (password_hash, user_id, user_email) = if let Some(user) = &user {
-        (user.password.as_str(), Some(user.id), Some(&user.email))
+    let (password_hash, user_id, user_email, user_fullname) = if let Some(user) = &user {
+        (user.password.as_str(), Some(user.id), Some(&user.email), Some(&user.fullname))
     } else {
-        (DUMMY_HASH, None, None)
+        (DUMMY_HASH, None, None, None)
     };
 
     let parsed_hash = PasswordHash::new(password_hash).map_err(|_e| {
@@ -144,7 +152,7 @@ pub async fn login(
     })?;
 
     if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
-        if let (Some(id), Some(email)) = (user_id, user_email) {
+        if let (Some(id), Some(email), Some(fullname)) = (user_id, user_email, user_fullname) {
             let token = create_jwt(id, email).map_err(|e| {
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
@@ -152,7 +160,7 @@ pub async fn login(
                 )
             })?;
             return Ok(Json(
-                json!({ "token": token, "user": { "id": id, "email": email } }),
+                json!({ "token": token, "user": { "id": id, "email": email, "fullname": fullname } }),
             ));
         }
     }
@@ -163,13 +171,67 @@ pub async fn login(
     ))
 }
 
-pub async fn me(auth_user: AuthUser) -> impl IntoResponse {
-    Json(json!({
-        "user": {
-            "id": auth_user.user_id,
-            "email": auth_user.email,
-        }
-    }))
+pub async fn me(
+    State(pool): State<DbPool>,
+    auth_user: AuthUser,
+) -> Result<impl IntoResponse, (StatusCode, Json<Value>)> {
+    let mut conn: Conn = pool.get().map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": e.to_string() })),
+        )
+    })?;
+
+    let user = users::table
+        .find(auth_user.user_id)
+        .first::<User>(&mut conn)
+        .optional()
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({ "error": e.to_string() })),
+            )
+        })?;
+
+    if let Some(user) = user {
+        return Ok(Json(json!({
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "fullname": user.fullname,
+            }
+        })));
+    }
+
+    Err((
+        StatusCode::NOT_FOUND,
+        Json(json!({ "error": "User not found" })),
+    ))
+}
+
+pub async fn update_profile(
+    State(pool): State<DbPool>,
+    auth_user: AuthUser,
+    Json(payload): Json<crate::models::UpdateProfileRequest>,
+) -> Result<impl IntoResponse, (StatusCode, Json<Value>)> {
+    let mut conn: Conn = pool.get().map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": e.to_string() })),
+        )
+    })?;
+
+    diesel::update(users::table.find(auth_user.user_id))
+        .set(users::fullname.eq(payload.fullname.trim()))
+        .execute(&mut conn)
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({ "error": e.to_string() })),
+            )
+        })?;
+
+    Ok((StatusCode::OK, Json(json!({ "message": "Profile updated successfully" }))))
 }
 
 pub async fn change_password(

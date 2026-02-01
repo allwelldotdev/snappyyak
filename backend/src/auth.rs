@@ -45,7 +45,6 @@ pub fn create_jwt(user_id: i32, email: &str) -> Result<String, jsonwebtoken::err
 
 pub struct AuthUser {
     pub user_id: i32,
-    pub email: String,
 }
 
 #[async_trait]
@@ -72,7 +71,6 @@ where
 
         Ok(AuthUser {
             user_id: token_data.claims.user_id,
-            email: token_data.claims.sub,
         })
     }
 }

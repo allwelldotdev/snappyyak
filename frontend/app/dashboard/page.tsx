@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Download, Columns } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -9,6 +10,7 @@ import { type DateRange } from '@/components/ui/calendar';
 
 export default function Dashboard() {
     // Auth check is now handled in layout.tsx
+    const router = useRouter();
     const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
     // Column Definitions
@@ -131,7 +133,10 @@ export default function Dashboard() {
                             {/* Mock Data Row */}
                             <tr className="hover:bg-gray-50 transition-colors group">
                                 {/* Sticky Column Data */}
-                                <td className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                                <td
+                                    onClick={() => router.push('/dashboard/employees/allwell')}
+                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
+                                >
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-orange-100 text-brand-orange flex items-center justify-center font-bold text-xs">
                                             AL
@@ -154,7 +159,10 @@ export default function Dashboard() {
 
                             {/* Detailed Placeholder Row (User 1) */}
                             <tr className="hover:bg-gray-50 transition-colors group">
-                                <td className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                                <td
+                                    onClick={() => router.push('/dashboard/employees/john-doe')}
+                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
+                                >
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
                                             JD
@@ -176,7 +184,10 @@ export default function Dashboard() {
 
                             {/* Detailed Placeholder Row (User 2) */}
                             <tr className="hover:bg-gray-50 transition-colors group">
-                                <td className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                                <td
+                                    onClick={() => router.push('/dashboard/employees/jane-smith')}
+                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
+                                >
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">
                                             JS
@@ -198,7 +209,7 @@ export default function Dashboard() {
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

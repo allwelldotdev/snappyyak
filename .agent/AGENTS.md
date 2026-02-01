@@ -91,6 +91,7 @@ SnappyYak-Core/
 - Use Diesel's type-safe query builders
 - Run `diesel migration run` after schema changes
 - **Password Change**: Validate current password before updating, hash new password with Argon2id
+- **Request Models**: Create specific structs for each endpoint's expected payload (e.g., `LoginRequest` vs `NewUser`) to prevent deserialization errors when fields differ (e.g., `fullname` required for signup but not login).
 
 ### Frontend (Next.js)
 - Use **'use client'** directive for components using hooks
@@ -170,6 +171,14 @@ SnappyYak-Core/
 - **Backend**: Manual testing with curl or frontend integration
 - **Frontend**: Browser testing, verify auth flows
 - Focus on: signup → dashboard → logout → login
+
+### Standard Test Credentials
+**CRITICAL RULE**: For ALL testing cases involving login or signup, you MUST use these exact credentials. DO NOT create random test users like "Test User".
+- **Fullname**: `Allwell Developer`
+- **Email**: `dev@example.com`
+- **Password**: `password123`
+- **Note**: If login fails, these credentials may need to be re-seeded or you may need to sign up a new user if the DB was reset.
+- **Cleanup**: ALWAYS delete any test users created during verification (e.g., `sqlite3 backend/db.sqlite "DELETE FROM users WHERE email = 'test@example.com';"`). Keep the database clean with only the standard developer account.
 
 ## Dependencies Management
 
