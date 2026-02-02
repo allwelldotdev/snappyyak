@@ -77,6 +77,16 @@
   - Replicated controls toolbar from Timesheets (date picker and filter button).
 - **Dashboard Navigation**:
   - Made "SnappyYak" logo in sidebar a clickable link routing to `/dashboard`.
+  - Added slim right border to sticky column cells in Employees table.
+- **Projects Page**:
+  - Implemented `projects/page.tsx` under Employee detail routes.
+  - Added "Today" date picker trigger, empty state message, and Projects Dashboard card.
+  - Dashboard includes Total Time and Utilization stat cards with CSS bar chart.
+  - Chart section expands to fill available vertical space using `flex-1`.
+- **Layout Fixes**:
+  - Updated `EmployeeLayout` to `min-h-full` for proper content overflow behavior.
+  - Fixed Schedules page calendar grid gap by making scrollable wrapper a flex container.
+  - Ensured both Projects and Schedules pages properly fill their containers.
 - **Documentation**:
   - Added standard test credentials to `AGENTS.md` for future agentic workflows.
 

@@ -56,7 +56,7 @@ export default function EmployeeSchedulesPage() {
     ];
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col flex-1">
             {/* Controls Toolbar - matching Timesheets page style */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 {/* Left Controls */}
@@ -90,9 +90,9 @@ export default function EmployeeSchedulesPage() {
             {/* Calendar Grid Container - outer clips, inner scrolls */}
             <div className="flex-1 border border-gray-200 rounded-lg overflow-hidden flex flex-col">
                 {/* Scrollable wrapper */}
-                <div className="overflow-x-auto flex-1">
+                <div className="overflow-x-auto flex-1 flex flex-col">
                     {/* Inner content with minimum width (7 columns × 210px = 1470px) */}
-                    <div className="min-w-[1470px] h-full flex flex-col">
+                    <div className="min-w-[1470px] flex-1 flex flex-col">
                         {/* Calendar Header Row */}
                         <div className="grid grid-cols-7 border-b border-gray-200 bg-white">
                             {DAYS.map((day) => (

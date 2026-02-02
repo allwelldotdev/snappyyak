@@ -118,7 +118,7 @@ export default function Dashboard() {
                         <thead className="bg-white sticky top-0 z-20">
                             <tr>
                                 {/* Sticky Column Header */}
-                                <th className="sticky left-0 bg-white z-20 p-4 font-medium text-gray-500 border-b border-gray-100 min-w-[250px] whitespace-nowrap shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                                <th className="sticky left-0 bg-white z-20 p-4 font-medium text-gray-500 border-b border-gray-100 border-r border-gray-100 min-w-[250px] whitespace-nowrap shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
                                     Employee Name
                                 </th>
                                 {/* Scrollable Headers */}
@@ -135,7 +135,7 @@ export default function Dashboard() {
                                 {/* Sticky Column Data */}
                                 <td
                                     onClick={() => router.push('/dashboard/employees/allwell')}
-                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
+                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 border-r border-gray-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-orange-100 text-brand-orange flex items-center justify-center font-bold text-xs">
@@ -161,7 +161,7 @@ export default function Dashboard() {
                             <tr className="hover:bg-gray-50 transition-colors group">
                                 <td
                                     onClick={() => router.push('/dashboard/employees/john-doe')}
-                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
+                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 border-r border-gray-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
@@ -186,7 +186,7 @@ export default function Dashboard() {
                             <tr className="hover:bg-gray-50 transition-colors group">
                                 <td
                                     onClick={() => router.push('/dashboard/employees/jane-smith')}
-                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
+                                    className="sticky left-0 bg-white group-hover:bg-gray-50 z-10 p-4 border-r border-gray-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] cursor-pointer"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-xs">

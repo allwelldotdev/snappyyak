@@ -25,7 +25,7 @@ export default function EmployeeLayout({
     ];
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col min-h-full">
             {/* Header Section (Not Sticky) */}
             <div className="bg-gray-50 pb-4 pt-1 mb-2">
                 {/* Breadcrumb / Back Link */}
