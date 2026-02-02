@@ -30,6 +30,9 @@ SnappyYak-Core/
 │   │   │   │   │   └── page.tsx  # Calendar grid with shifts/time-off
 │   │   │   │   └── projects/     # Projects dashboard
 │   │   │   │       └── page.tsx  # Stats cards and bar chart
+│   │   │   ├── time/          # Time and Attendance section
+│   │   │   │   ├── layout.tsx    # Shared header (title, tabs, view toggle)
+│   │   │   │   └── page.tsx      # Timesheets data table
 │   │   │   └── settings/      # Personal settings page
 │   │   ├── globals.css  # Global styles
 │   │   └── layout.tsx   # Root layout with AuthProvider
@@ -55,6 +58,8 @@ The application uses **Next.js App Router** for client-side routing.
     - **`/dashboard/employees/[id]`** (default): Timesheets view with data table.
     - **`/dashboard/employees/[id]/schedules`**: Schedules calendar with grid layout.
     - **`/dashboard/employees/[id]/projects`**: Projects dashboard with stats and bar chart.
+  - **`/dashboard/time`**: Time and Attendance - Nested layout with tabs (Timesheets, Manual Time, Schedules).
+    - **`/dashboard/time`** (default): Timesheets data table with filtering controls.
   - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
 
 ## Design System Implementation
