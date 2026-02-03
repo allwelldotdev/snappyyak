@@ -96,7 +96,17 @@
   - Ensured both Projects and Schedules pages properly fill their containers.
 - **Documentation**:
   - Added standard test credentials to `AGENTS.md` for future agentic workflows.
-
+- **Projects Dashboard**:
+  - Implemented `/dashboard/projects` with tabbed navigation ("Insightful" and "Integrated").
+  - **Insightful View**:
+    - Data table with fixed "Project Name" column (250px).
+    - Controls toolbar (Date Picker, Search).
+    - empty state component.
+    - "Task Statuses" info banner.
+  - **Integrated View**:
+    - Route: `/dashboard/projects/integrated`.
+    - Centered empty state without table structure.
+    - Inherits layouts and controls.
 ## Pending / Future Work
 - **Security Enhancements**:
   - Implement refresh tokens.

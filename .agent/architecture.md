@@ -58,6 +58,9 @@ The application uses **Next.js App Router** for client-side routing.
     - **`/dashboard/employees/[id]`** (default): Timesheets view with data table.
     - **`/dashboard/employees/[id]/schedules`**: Schedules calendar with grid layout.
     - **`/dashboard/employees/[id]/projects`**: Projects dashboard with stats and bar chart.
+  - **`/dashboard/projects`**: Projects Dashboard - Tabbed interface.
+    - **`/dashboard/projects`** (default): "Insightful" view with projects table.
+    - **`/dashboard/projects/integrated`**: "Integrated" view with empty state.
   - **`/dashboard/time`**: Time and Attendance - Nested layout with tabs (Timesheets, Manual Time, Schedules).
     - **`/dashboard/time`** (default): Timesheets data table with filtering controls.
   - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
