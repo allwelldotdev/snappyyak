@@ -20,4 +20,4 @@ As of January 2026, the SnappyYak Core frontend is built using a custom design s
 If the application complexity increases (e.g., adding advanced forms, complex tables, or multi-step modals), migrating to **Shadcn UI** is recommended for its balance of accessibility and Tailwind-first customization.
 
 ## Status
-**Under Review**. Current implementation remains custom vanilla Tailwind.
+**ADOPTED (2026-01-31)**. Shadcn UI components (Calendar, Select, Popover) have been integrated for the DateRangePicker and other complex UI elements. Custom components remain for simpler use cases.

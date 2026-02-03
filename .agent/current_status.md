@@ -12,6 +12,18 @@
   - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
 
 ## Recently Completed
+- **Settings Layout Refactoring**:
+  - Created `/dashboard/settings/layout.tsx` with shared header and tabbed navigation ("Info" and "Localization").
+  - Migrated existing settings content to `/dashboard/settings/info/page.tsx` as the default route.
+  - Implemented `/dashboard/settings/localization/page.tsx` with Time & Language settings (time zones, time format, language dropdown).
+  - Updated `/dashboard/settings/page.tsx` to redirect to the info page.
+  - Tab navigation follows the same pattern as the Projects layout.
+- **Downloads Page**:
+  - Implemented `/dashboard/download` page for OS-specific installation file downloads.
+  - Centered card UI with Windows, macOS, and Linux download options.
+  - Custom SVG icons for each OS (Windows logo, Apple logo, Linux Tux).
+  - BETA badge on Linux download option.
+  - Violet-themed download buttons with hover effects.
 - **Time and Attendance Dashboard**:
   - Implemented `ManualTimePage` with control toolbar (date picker, filter) and empty state data table.
   - Implemented `SchedulesPage` with highly customized data table:
@@ -64,6 +76,9 @@
   - Added "Preset Filters" sidebar with 9 options (Today, Yesterday, This Week, Last 7 Days, etc.).
   - Implemented active preset highlighting with violet background.
   - Styled Cancel/Apply buttons with violet theme (border and filled variants).
+- **Settings Layout Padding Fix**:
+  - Removed fixed height constraints from `settings/layout.tsx` to allow natural content flow.
+  - Content now respects parent padding without excessive whitespace.
 - **Employee Details Page**:
   - Created dynamic route `/dashboard/employees/[id]` matching the design mockups.
   - Implemented `EmptyState` component with custom CSS/SVG illustration (sleepy computer).

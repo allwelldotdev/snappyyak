@@ -32,15 +32,32 @@ SnappyYak-Core/
 │   │   │   │       └── page.tsx  # Stats cards and bar chart
 │   │   │   ├── time/          # Time and Attendance section
 │   │   │   │   ├── layout.tsx    # Shared header (title, tabs, view toggle)
-│   │   │   │   └── page.tsx      # Timesheets data table
-│   │   │   └── settings/      # Personal settings page
+│   │   │   │   ├── page.tsx      # Timesheets data table
+│   │   │   │   ├── manual/       # Manual time entry
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── schedules/    # Team schedules
+│   │   │   │       └── page.tsx
+│   │   │   ├── projects/      # Projects dashboard
+│   │   │   │   ├── layout.tsx    # Shared header (tabs)
+│   │   │   │   ├── page.tsx      # Insightful view
+│   │   │   │   └── integrated/   # Integrated view
+│   │   │   │       └── page.tsx
+│   │   │   ├── download/      # Download page
+│   │   │   │   └── page.tsx   # OS-specific installation files
+│   │   │   └── settings/      # Personal settings
+│   │   │       ├── layout.tsx    # Shared header (tabs)
+│   │   │       ├── page.tsx      # Redirects to info
+│   │   │       ├── info/         # Password, social, 2FA
+│   │   │       │   └── page.tsx
+│   │   │       └── localization/ # Time zones, language
+│   │   │           └── page.tsx
 │   │   ├── globals.css  # Global styles
 │   │   └── layout.tsx   # Root layout with AuthProvider
 │   ├── components/      # UI Components
-│   │   ├── dashboard/   # Dashboard-specific components (UserMenu)
+│   │   ├── dashboard/   # Dashboard-specific (UserMenu, DateRangePicker, EmptyState)
 │   │   ├── layout/      # Layout components (Navbar)
 │   │   ├── providers/   # Context providers (AuthProvider)
-│   │   └── ui/          # Reusable UI components (Logo)
+│   │   └── ui/          # Reusable UI (Logo, Calendar, Select, Button, Popover)
 │   ├── public/          # Static assets
 │   ├── tailwind.config.ts # Tailwind config
 │   └── package.json     # Frontend dependencies
@@ -63,7 +80,12 @@ The application uses **Next.js App Router** for client-side routing.
     - **`/dashboard/projects/integrated`**: "Integrated" view with empty state.
   - **`/dashboard/time`**: Time and Attendance - Nested layout with tabs (Timesheets, Manual Time, Schedules).
     - **`/dashboard/time`** (default): Timesheets data table with filtering controls.
-  - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
+    - **`/dashboard/time/manual`**: Manual time entry page.
+    - **`/dashboard/time/schedules`**: Team schedules with sticky headers.
+  - **`/dashboard/download`**: Download Page - OS-specific installation file downloads (Windows, macOS, Linux).
+  - **`/dashboard/settings`**: Personal Settings - Nested layout with tabs (Info, Localization).
+    - **`/dashboard/settings/info`** (default): Password change, social accounts, 2FA.
+    - **`/dashboard/settings/localization`**: Time zones, time format, language settings.
 
 ## Design System Implementation
 Styles are managed via **Tailwind CSS** with advanced accessible components provided by **Shadcn UI** (Radix-based).

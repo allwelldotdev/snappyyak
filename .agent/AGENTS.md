@@ -2,7 +2,7 @@
 
 **Project**: SnappyYak Core Application  
 **Type**: Full-stack application with separate backend and frontend  
-**Last Updated**: 2026-01-30 (Forgot Password placeholder, OAuth UI integration, UI alignment fixes)
+**Last Updated**: 2026-02-03 (Settings Layout refactoring, Downloads page, Time and Attendance section)
 
 ## Tech Stack
 
@@ -42,14 +42,20 @@ SnappyYak-Core/
 │   │   ├── dashboard/    # Protected dashboard
 │   │   │   ├── layout.tsx     # Shared sidebar & navigation
 │   │   │   ├── page.tsx       # Overview/Home dashboard
-│   │   │   └── settings/      # Personal settings page
+│   │   │   ├── employees/[id]/ # Employee details (nested layout)
+│   │   │   ├── time/          # Time and Attendance section
+│   │   │   ├── projects/      # Projects dashboard
+│   │   │   ├── download/      # OS-specific download page
+│   │   │   └── settings/      # Personal settings (nested layout)
+│   │   │       ├── info/      # Password, social accounts, 2FA
+│   │   │       └── localization/ # Time zones, language
 │   │   ├── layout.tsx    # Root layout
 │   │   └── page.tsx      # Home page
 │   ├── components/       # UI components
-│   │   ├── dashboard/    # Dashboard components (UserMenu)
+│   │   ├── dashboard/    # Dashboard components (UserMenu, DateRangePicker)
 │   │   ├── layout/       # Navbar, Footer
 │   │   ├── sections/     # Hero, Features, etc.
-│   │   ├── ui/           # Logo, Button, Container
+│   │   ├── ui/           # Logo, Button, Calendar, Select (Shadcn-based)
 │   │   └── providers/    # AuthProvider
 │   └── public/           # Static assets
 └── legacy_vite_app/      # Archived Hono/Vite codebase
