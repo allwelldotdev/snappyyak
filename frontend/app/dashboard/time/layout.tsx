@@ -22,7 +22,7 @@ export default function TimeAttendanceLayout({
 
     // Configuration for where to hide the view toggle
     // If we add pages later that shouldn't show this, add their paths here.
-    const HIDE_VIEW_TOGGLE_PATHS: string[] = [];
+    const HIDE_VIEW_TOGGLE_PATHS: string[] = ['/dashboard/time/manual', '/dashboard/time/schedules'];
     const showViewToggle = !HIDE_VIEW_TOGGLE_PATHS.some(path => pathname.startsWith(path));
 
     return (
@@ -36,7 +36,7 @@ export default function TimeAttendanceLayout({
                     <span className="text-brand-orange">Time and Attendance</span>
                 </div> */}
 
-                <div className="flex justify-between items-end mb-6">
+                <div className="flex justify-between items-end mb-6 h-9">
                     <div>
                         <h1 className="text-2xl font-bold font-heading text-brand-dark">Time and Attendance</h1>
                         {/* Optional subtitle if needed, keeping it clean for now matching design */}

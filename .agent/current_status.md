@@ -12,6 +12,13 @@
   - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
 
 ## Recently Completed
+- **Time and Attendance Dashboard**:
+  - Implemented `ManualTimePage` with control toolbar (date picker, filter) and empty state data table.
+  - Implemented `SchedulesPage` with highly customized data table:
+    - Sticky headers for vertical scrolling and sticky "Employee Name" column for horizontal scrolling.
+    - Custom styling for sticky columns (borders, shadows).
+    - Link navigation from employee names to details page (`/dashboard/employees/[id]`).
+  - Updated `TimeAttendanceLayout` to conditionally hide view toggles for Manual and Schedules pages.
 - **Security Upgrade**: Migrated from bcrypt to Argon2id for password hashing.
 - **Input Validation**: Added email validation and input trimming on auth endpoints.
 - **Error Handling**: Fixed frontend JSON parsing errors by ensuring all backend errors return proper JSON format.
