@@ -33,11 +33,11 @@ export default function LocalizationPage() {
             <h2 className="text-lg font-bold text-brand-dark">Time & Language</h2>
 
             {/* Info Banner */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-violet-50 border border-violet-200 rounded-lg">
-                <Info className="w-5 h-5 text-violet-600 flex-shrink-0" />
-                <p className="text-sm text-violet-700">
+            <div className="flex items-center gap-3 px-4 py-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                <Info className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+                <p className="text-sm text-indigo-700">
                     Time zone explanation.{' '}
-                    <a href="#" className="font-medium text-violet-700 underline hover:text-violet-800">
+                    <a href="#" className="font-medium text-indigo-700 underline hover:text-indigo-800">
                         Learn more.
                     </a>
                 </p>
@@ -52,7 +52,7 @@ export default function LocalizationPage() {
                         type="button"
                         onClick={() => setTimeZone('organizational')}
                         className={`p-4 rounded-lg border text-left transition-all ${timeZone === 'organizational'
-                            ? 'border-violet-500 bg-violet-50'
+                            ? 'border-indigo-500 bg-indigo-50'
                             : 'border-gray-200 hover:border-gray-300'
                             }`}
                     >
@@ -62,11 +62,11 @@ export default function LocalizationPage() {
                                 <p className="text-xs text-gray-500 mt-1">UTC-6 (CST)</p>
                             </div>
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${timeZone === 'organizational'
-                                ? 'border-violet-500'
+                                ? 'border-indigo-500'
                                 : 'border-gray-300'
                                 }`}>
                                 {timeZone === 'organizational' && (
-                                    <div className="w-2.5 h-2.5 rounded-full bg-violet-500" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
                                 )}
                             </div>
                         </div>
@@ -77,21 +77,21 @@ export default function LocalizationPage() {
                         type="button"
                         onClick={() => setTimeZone('employee')}
                         className={`p-4 rounded-lg border text-left transition-all ${timeZone === 'employee'
-                            ? 'border-violet-500 bg-violet-50'
+                            ? 'border-indigo-500 bg-indigo-50'
                             : 'border-gray-200 hover:border-gray-300'
                             }`}
                     >
                         <div className="flex items-start gap-3">
                             <div className="flex-1">
-                                <p className="font-medium text-violet-600 text-sm">Time Zone of Your Employees</p>
+                                <p className="font-medium text-indigo-600 text-sm">Time Zone of Your Employees</p>
                                 <p className="text-xs text-gray-500 mt-1">Location where your employees work.</p>
                             </div>
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${timeZone === 'employee'
-                                ? 'border-violet-500'
+                                ? 'border-indigo-500'
                                 : 'border-gray-300'
                                 }`}>
                                 {timeZone === 'employee' && (
-                                    <div className="w-2.5 h-2.5 rounded-full bg-violet-500" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
                                 )}
                             </div>
                         </div>
@@ -108,16 +108,16 @@ export default function LocalizationPage() {
                         type="button"
                         onClick={() => setTimeFormat('12')}
                         className={`px-4 py-3 rounded-lg border font-medium text-sm transition-all flex items-center gap-3 ${timeFormat === '12'
-                            ? 'border-violet-500 bg-violet-50 text-violet-700'
+                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                             : 'border-gray-200 text-gray-700 hover:border-gray-300'
                             }`}
                     >
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${timeFormat === '12'
-                            ? 'border-violet-500'
+                            ? 'border-indigo-500'
                             : 'border-gray-300'
                             }`}>
                             {timeFormat === '12' && (
-                                <div className="w-2 h-2 rounded-full bg-violet-500" />
+                                <div className="w-2 h-2 rounded-full bg-indigo-500" />
                             )}
                         </div>
                         12 hour
@@ -128,16 +128,16 @@ export default function LocalizationPage() {
                         type="button"
                         onClick={() => setTimeFormat('24')}
                         className={`px-4 py-3 rounded-lg border font-medium text-sm transition-all flex items-center gap-3 ${timeFormat === '24'
-                            ? 'border-violet-500 bg-violet-50 text-violet-700'
+                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                             : 'border-gray-200 text-gray-700 hover:border-gray-300'
                             }`}
                     >
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${timeFormat === '24'
-                            ? 'border-violet-500'
+                            ? 'border-indigo-500'
                             : 'border-gray-300'
                             }`}>
                             {timeFormat === '24' && (
-                                <div className="w-2 h-2 rounded-full bg-violet-500" />
+                                <div className="w-2 h-2 rounded-full bg-indigo-500" />
                             )}
                         </div>
                         24 hour
@@ -168,7 +168,7 @@ export default function LocalizationPage() {
                                         setLanguage(lang.value);
                                         setIsDropdownOpen(false);
                                     }}
-                                    className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${language === lang.value ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-700'
+                                    className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${language === lang.value ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700'
                                         }`}
                                 >
                                     {lang.label}
@@ -185,7 +185,7 @@ export default function LocalizationPage() {
                 onClick={handleSave}
                 disabled={!isDirty}
                 className={`px-6 py-2.5 font-medium rounded-lg transition-colors ${isDirty
-                    ? 'bg-violet-600 text-white hover:bg-violet-700'
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                     : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                     }`}
             >

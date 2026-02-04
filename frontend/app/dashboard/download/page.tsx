@@ -45,13 +45,13 @@ const DownloadRow = ({ icon, name, badge }: DownloadRowProps) => (
         </div>
         <div className="flex items-center gap-3">
             {badge && (
-                <span className="px-2 py-0.5 text-xs font-medium bg-violet-500 text-white rounded">
+                <span className="px-2 py-0.5 text-xs font-medium bg-indigo-600 text-white rounded">
                     {badge}
                 </span>
             )}
             <button
                 type="button"
-                className="p-2 text-violet-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                className="p-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
                 aria-label={`Download for ${name}`}
             >
                 <Download className="w-5 h-5" />

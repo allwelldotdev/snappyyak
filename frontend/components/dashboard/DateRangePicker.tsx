@@ -166,9 +166,9 @@ export function DateRangePicker({
                 <button
                     className={cn(
                         'flex items-center gap-2 px-4 py-2',
-                        'bg-violet-100 text-violet-600',
+                        'bg-indigo-50 text-indigo-600',
                         'rounded-lg text-sm font-medium',
-                        'hover:bg-violet-200 transition-colors',
+                        'hover:bg-indigo-100 transition-colors',
                         className
                     )}
                 >
@@ -185,7 +185,7 @@ export function DateRangePicker({
                     <Select value={timezone} onValueChange={setTimezone}>
                         <SelectTrigger className="w-[200px] h-9 text-sm border border-gray-200 rounded-lg">
                             <div className="flex items-center gap-2">
-                                <Globe className="w-4 h-4 text-violet-500" />
+                                <Globe className="w-4 h-4 text-indigo-500" />
                                 <SelectValue placeholder="Time Zone" />
                             </div>
                         </SelectTrigger>
@@ -225,8 +225,8 @@ export function DateRangePicker({
                                     className={cn(
                                         'px-3 py-2 text-sm text-left rounded-md transition-colors',
                                         activePreset === preset.label
-                                            ? 'bg-violet-100 text-violet-600 font-medium'
-                                            : 'text-violet-500 hover:bg-gray-50'
+                                            ? 'bg-indigo-100 text-indigo-600 font-medium'
+                                            : 'text-indigo-500 hover:bg-gray-50'
                                     )}
                                 >
                                     {preset.label}
@@ -240,13 +240,13 @@ export function DateRangePicker({
                 <div className="flex items-center justify-end gap-3 px-4 py-3 border-t border-gray-100">
                     <button
                         onClick={handleCancel}
-                        className="px-5 py-2 text-sm font-medium text-violet-600 border border-violet-300 hover:bg-violet-50 rounded-lg transition-colors"
+                        className="px-5 py-2 text-sm font-medium text-indigo-600 border border-indigo-300 hover:bg-indigo-50 rounded-lg transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleApply}
-                        className="px-5 py-2 text-sm font-medium text-white bg-violet-500 hover:bg-violet-600 rounded-lg transition-colors"
+                        className="px-5 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-colors"
                     >
                         Apply
                     </button>

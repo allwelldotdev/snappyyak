@@ -12,7 +12,7 @@ const config: Config = {
                 brand: {
                     orange: '#EA580C', // Keeping consistent with legacy
                     dark: '#132326',
-                    purple: '#7C3AED', // DateRangePicker accent
+                    indigo: '#4F46E5',
                 },
                 bg: {
                     main: '#FFFFFF',
