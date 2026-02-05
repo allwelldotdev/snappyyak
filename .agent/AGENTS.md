@@ -121,8 +121,8 @@ SnappyYak-Core/
 ### Styling
 - **CRITICAL**: See `.agent/SOP/frontend_design_system.md` for mandatory design rules
 - **Design tokens** in `frontend/tailwind.config.ts`:
-  - Colors: `brand-orange` (#EA580C), `brand-dark` (#132326)
-  - **CRITICAL**: ONLY use `brand-orange` and `brand-dark` for brand colors. DO NOT introduce additional brand colors (e.g., purple, blue) without explicit user approval.
+  - Colors: `brand-orange` (#EA580C), `brand-dark` (#132326), `brand-indigo` (#4F46E5)
+  - **CRITICAL**: ONLY use approved brand colors (`brand-orange`, `brand-dark`, `brand-indigo`). DO NOT introduce additional brand colors without explicit user approval.
   - Fonts: `font-heading` (Instrument Sans), `font-body` (Satoshi), `font-ui` (Satoshi)
 - **Font Loading**: Satoshi MUST be loaded via Fontshare CDN in `layout.tsx`
 - **DO NOT** add Next.js font optimization classes to `<body>` tag

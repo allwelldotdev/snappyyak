@@ -80,15 +80,16 @@ fontFamily: {
 ## Color Palette
 
 ### ⚠️ COLOR POLICY (CRITICAL)
-**ONLY `brand-orange` (#EA580C) and `brand-dark` (#132326) are approved for brand colors.**
+**Approved brand colors: `brand-orange` (#EA580C), `brand-dark` (#132326), and `brand-indigo` (#4F46E5).**
 
-- **DO NOT** introduce additional brand colors (e.g., purple, blue, green) without explicit user approval.
+- **DO NOT** introduce additional brand colors without explicit user approval.
 - **DO NOT** add custom colors to `tailwind.config.ts` unless the user explicitly requests them.
 - Stick to the defined palette below. If a design requires a different color, consult the user first.
 
 ### Brand Colors
 - **Primary Orange**: `#EA580C` (Tailwind: `brand-orange`)
 - **Dark**: `#132326` (Tailwind: `brand-dark`)
+- **Indigo**: `#4F46E5` (Tailwind: `brand-indigo`)
 
 ### Background Colors
 - **Main**: `#FFFFFF` (Tailwind: `bg-main`)
@@ -109,6 +110,7 @@ colors: {
   brand: {
     orange: '#EA580C',
     dark: '#132326',
+    indigo: '#4F46E5',
   },
   bg: {
     main: '#FFFFFF',

@@ -58,10 +58,21 @@ The project includes a robust local authentication system, now powered by Rust f
 - **Protected Routes**: Dashboard access is restricted to logged-in users via Next.js middleware/hooks.
 
 ### API Endpoints (Backend Port 8080)
-- `POST /api/auth/signup`: Create a new user account.
-- `POST /api/auth/login`: Authenticate and receive a JWT.
+
+**Authentication:**
+- `POST /api/auth/signup`: Create a new employer account.
+- `POST /api/auth/login`: Authenticate and receive a JWT (supports password or temp_password).
 - `GET /api/auth/me`: Validate the current session using the stored token.
 - `POST /api/auth/change-password`: Update user password (requires valid JWT).
+
+**Employer Management:**
+- `POST /api/employer/employees`: Add a new employee (auto-generates temporary password).
+- `GET /api/employer/employees`: List all employees.
+- `GET /api/employer/employees/:id`: Get employee details.
+- `DELETE /api/employer/employees/:id`: Remove employee.
+
+**Employee Onboarding:**
+- `POST /api/onboarding/complete`: Complete onboarding by setting a new password.
 
 ---
 

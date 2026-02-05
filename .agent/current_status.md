@@ -122,6 +122,15 @@
     - Route: `/dashboard/projects/integrated`.
     - Centered empty state without table structure.
     - Inherits layouts and controls.
+- **Role-Based Authentication System**:
+  - **Database**: Added `role`, `temp_password` fields to users table. Made `password` nullable for new employees.
+  - **Backend Refactoring**: Organized routes into modular structure (`routes/auth.rs`, `routes/employer.rs`, `routes/onboarding.rs`).
+  - **Employer Endpoints**: Implemented employee management (`POST /add`, `GET /list`, `GET /:id`, `DELETE /:id`). Auto-generates secure temporary passwords.
+  - **Onboarding Flow**: Implemented `POST /api/onboarding/complete` for employees to set permanent password.
+  - **Frontend**: Updated `AuthProvider` with role-based redirects. Created `useRequireAuth` hook for route protection. Implemented `/employer` and `/onboarding` pages with role-specific layouts.
+  - **JWT Updates**: Enhanced JWT payload with `role` and `needs_onboarding` fields for granular access control.
+  - **Verification**: Both backend (`cargo check`) and frontend (`npm run build`) compile successfully.
+
 ## Pending / Future Work
 - **Security Enhancements**:
   - Implement refresh tokens.
@@ -132,7 +141,6 @@
 - **Features**:
   - Email verification (placeholder exists).
   - Real productivity data ingestion (currently mocked).
-  - User roles setup.
 - **Infrastructure & UI**:
     - Dockerize applications for easier deployment.
     - Set up CI/CD pipelines.

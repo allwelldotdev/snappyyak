@@ -38,8 +38,12 @@ This SOP documents the authentication implementation for the SnappyYak Core appl
 backend/src/
 ├── main.rs       # Server initialization, route registration
 ├── auth.rs       # JWT creation, validation, middleware
-├── routes.rs     # API handlers (signup, login, me, change_password)
-├── models.rs     # Diesel models (User, NewUser, ChangePasswordRequest)
+├── routes/       # Modular API handlers
+│   ├── mod.rs        # Route module exports
+│   ├── auth.rs       # Auth endpoints (signup, login, me, change_password)
+│   ├── employer.rs   # Employer endpoints (employee mgmt)
+│   └── onboarding.rs # Onboarding endpoints (password setup)
+├── models.rs     # Diesel models (User, NewUser, role-based requests)
 ├── db.rs         # Database connection pool
 └── schema.rs     # Auto-generated Diesel schema
 ```
@@ -47,44 +51,76 @@ backend/src/
 ### API Endpoints
 
 #### POST /api/auth/signup
-- **Input**: `{ email: string, password: string }`
+- **Input**: `{ email: string, password: string, fullname: string }`
 - **Process**:
   1. Sanitize input (trim whitespace)
   2. Validate email format (must contain '@')
   3. Check if user exists
   4. Hash password with Argon2id
-  5. Insert into database
-  6. Generate JWT
-- **Output**: `{ token: string, user: { id, email } }` (or JSON error object)
+  5. Insert into database with `role: 'employer'`
+  6. Generate JWT with role and needs_onboarding
+- **Output**: `{ token: string, user: { id, email, fullname, role, needs_onboarding } }`
 
 #### POST /api/auth/login
 - **Input**: `{ email: string, password: string }`
 - **Process**:
   1. Sanitize input (trim whitespace)
   2. Find user by email
-  3. Verify password with Argon2id
-  4. Generate JWT
-- **Output**: `{ token: string, user: { id, email } }` (or JSON error object)
+  3. Verify against password or temp_password
+  4. Calculate needs_onboarding (employee with null password)
+  5. Generate JWT with role and needs_onboarding
+- **Output**: `{ token: string, user: { id, email, fullname, role, needs_onboarding } }`
 
 #### GET /api/auth/me
 - **Headers**: `Authorization: Bearer <token>`
 - **Process**:
   1. Extract JWT from header
   2. Validate signature and expiration
-  3. Return user info
-- **Output**: `{ user: { id, email } }`
+  3. Return user info with role and onboarding status
+- **Output**: `{ user: { id, email, fullname, role, needs_onboarding } }`
 
 #### POST /api/auth/change-password
 - **Headers**: `Authorization: Bearer <token>`
 - **Input**: `{ current_password: string, new_password: string }`
 - **Process**:
   1. Verify user authentication via JWT
-  2. Retrieve user from database
-  3. Verify current password with Argon2id
-  4. Validate new password (minimum 8 characters)
-  5. Hash new password with Argon2id
-  6. Update user record in database
-- **Output**: `{ message: "Password updated successfully" }` (or JSON error object)
+  2. Verify current password (handles nullable password field)
+  3. Hash new password with Argon2id
+  4. Update user record
+- **Output**: `{ message: "Password updated successfully" }`
+
+#### POST /api/employer/employees
+- **Headers**: `Authorization: Bearer <token>` (Employer only)
+- **Input**: `{ email: string, name: string }`
+- **Process**:
+  1. Verify employer role
+  2. Generate 12-char temp password
+  3. Hash temp password with Argon2id
+  4. Create employee with `role: 'employee'`, null password
+- **Output**: `{ id: number, email: string, temp_password: string }`
+
+#### GET /api/employer/employees
+- **Headers**: `Authorization: Bearer <token>` (Employer only)
+- **Output**: `{ employees: [{ id, email, fullname, onboarded, created_at }] }`
+
+#### GET /api/employer/employees/:id
+- **Headers**: `Authorization: Bearer <token>` (Employer only)
+- **Output**: `{ id, email, fullname, onboarded, created_at }`
+
+#### DELETE /api/employer/employees/:id
+- **Headers**: `Authorization: Bearer <token>` (Employer only)
+- **Output**: `{ message: "Employee deleted successfully" }`
+
+#### POST /api/onboarding/complete
+- **Headers**: `Authorization: Bearer <token>` (Employee only, needs_onboarding: true)
+- **Input**: `{ temp_password: string, new_password: string }`
+- **Process**:
+  1. Verify temp_password
+  2. Validate new_password (min 8 chars)
+  3. Hash new password
+  4. Update user (set password, clear temp_password)
+  5. Return new JWT with needs_onboarding: false
+- **Output**: `{ message: "Onboarding complete", token: string }`
 
 ### Frontend Integration
 - **AuthProvider**: `frontend/components/providers/AuthProvider.tsx`
@@ -99,7 +135,10 @@ backend/src/
 CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL,
+  fullname TEXT NOT NULL,
+  password TEXT,                     -- Nullable for new employees
+  temp_password TEXT,                -- For employee onboarding
+  role TEXT NOT NULL DEFAULT 'employee',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```

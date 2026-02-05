@@ -7,6 +7,8 @@ interface User {
   id: number;
   email: string;
   fullname: string;
+  role: 'employer' | 'employee';
+  needs_onboarding: boolean;
 }
 
 interface AuthContextType {
@@ -51,7 +53,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (token: string, user: User) => {
     localStorage.setItem('token', token);
     setUser(user);
-    router.push('/dashboard');
+
+    // Role-based redirect logic
+    if (user.role === 'employer') {
+      router.push('/employer');
+    } else if (user.role === 'employee' && user.needs_onboarding) {
+      router.push('/onboarding');
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   const logout = () => {
