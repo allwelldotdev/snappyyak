@@ -61,6 +61,7 @@ The project includes a robust local authentication system, now powered by Rust f
 - `POST /api/auth/signup`: Create a new user account.
 - `POST /api/auth/login`: Authenticate and receive a JWT.
 - `GET /api/auth/me`: Validate the current session using the stored token.
+- `POST /api/auth/change-password`: Update user password (requires valid JWT).
 
 ---
 

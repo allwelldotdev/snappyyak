@@ -4,7 +4,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, Users, Clock, Settings } from 'lucide-react';
+import { Users, CalendarDays, Briefcase, CloudDownload, Settings } from 'lucide-react';
 import { UserMenu } from '@/components/dashboard/UserMenu';
 
 export default function DashboardLayout({
@@ -31,17 +31,18 @@ export default function DashboardLayout({
             {/* Sidebar */}
             <aside className="w-64 bg-brand-dark text-white hidden md:flex flex-col">
                 <div className="p-6">
-                    <div className="text-2xl font-bold font-heading text-brand-orange">SnappyYak</div>
+                    <Link href="/dashboard" className="text-2xl font-bold font-heading text-brand-orange">SnappyYak</Link>
                 </div>
                 <nav className="flex-1 px-4 space-y-2 mt-4">
                     {[
-                        { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-                        { href: '#', label: 'Teams', icon: Users },
-                        { href: '#', label: 'Time Logs', icon: Clock },
+                        { href: '/dashboard', label: 'Employees', icon: Users },
+                        { href: '/dashboard/time', label: 'Time and Attendance', icon: CalendarDays },
+                        { href: '/dashboard/projects', label: 'Projects', icon: Briefcase },
+                        { href: '/dashboard/download', label: 'Download', icon: CloudDownload },
                         { href: '/dashboard/settings', label: 'Settings', icon: Settings },
                     ].map((link) => {
                         const Icon = link.icon;
-                        const isActive = link.href === pathname || (link.href !== '/dashboard' && pathname.startsWith(link.href) && link.href !== '#');
+                        const isActive = link.href === pathname || (link.href !== '/dashboard' && pathname.startsWith(link.href)) || (link.href === '/dashboard' && pathname.startsWith('/dashboard/employees/'));
 
                         return (
                             <Link

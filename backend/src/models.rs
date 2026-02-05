@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 pub struct User {
     pub id: i32,
     pub email: String,
+    pub fullname: String,
     #[serde(skip)]
     pub password: String,
     pub created_at: chrono::NaiveDateTime,
@@ -16,6 +17,13 @@ pub struct User {
 #[diesel(table_name = crate::schema::users)]
 pub struct NewUser {
     pub email: String,
+    pub fullname: String,
+    pub password: String,
+}
+
+#[derive(Deserialize)]
+pub struct LoginRequest {
+    pub email: String,
     pub password: String,
 }
 
@@ -23,4 +31,9 @@ pub struct NewUser {
 pub struct ChangePasswordRequest {
     pub current_password: String,
     pub new_password: String,
+}
+
+#[derive(Deserialize)]
+pub struct UpdateProfileRequest {
+    pub fullname: String,
 }

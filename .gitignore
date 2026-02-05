@@ -67,3 +67,6 @@ coverage/
 
 # Legacy (archived)
 legacy_vite_app/
+
+# Local Asset Files
+SnappyYak-Core_Assets/

@@ -12,6 +12,25 @@
   - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
 
 ## Recently Completed
+- **Settings Layout Refactoring**:
+  - Created `/dashboard/settings/layout.tsx` with shared header and tabbed navigation ("Info" and "Localization").
+  - Migrated existing settings content to `/dashboard/settings/info/page.tsx` as the default route.
+  - Implemented `/dashboard/settings/localization/page.tsx` with Time & Language settings (time zones, time format, language dropdown).
+  - Updated `/dashboard/settings/page.tsx` to redirect to the info page.
+  - Tab navigation follows the same pattern as the Projects layout.
+- **Downloads Page**:
+  - Implemented `/dashboard/download` page for OS-specific installation file downloads.
+  - Centered card UI with Windows, macOS, and Linux download options.
+  - Custom SVG icons for each OS (Windows logo, Apple logo, Linux Tux).
+  - BETA badge on Linux download option.
+  - Violet-themed download buttons with hover effects.
+- **Time and Attendance Dashboard**:
+  - Implemented `ManualTimePage` with control toolbar (date picker, filter) and empty state data table.
+  - Implemented `SchedulesPage` with highly customized data table:
+    - Sticky headers for vertical scrolling and sticky "Employee Name" column for horizontal scrolling.
+    - Custom styling for sticky columns (borders, shadows).
+    - Link navigation from employee names to details page (`/dashboard/employees/[id]`).
+  - Updated `TimeAttendanceLayout` to conditionally hide view toggles for Manual and Schedules pages.
 - **Security Upgrade**: Migrated from bcrypt to Argon2id for password hashing.
 - **Input Validation**: Added email validation and input trimming on auth endpoints.
 - **Error Handling**: Fixed frontend JSON parsing errors by ensuring all backend errors return proper JSON format.
@@ -41,16 +60,82 @@
   - Consistent padding/margin across all dashboard pages.
   - Strict adherence to `brand-orange` and `brand-dark` color scheme (removed `brand-purple`).
   - Active sidebar highlighting correctly reflects current page.
-
+- **Auth Enhancements**:
+  - Implemented 'Forgot Password' placeholder flow with email input and success state using `forgot-password/page.tsx`.
+  - Added "Forgot password?" link to the main login form.
+  - Integrated generic OAuth buttons (Google & Slack) with specific UI styling (white bg, border) to the login/signup pages.
+  - Refactored "Edit Columns" modal to a right-aligned Popover in the Employees dashboard for better UX.
+  - Implemented functional column toggling using React state to dynamically show/hide table columns.
+  - Optimized table layout: prevented header/cell wrapping with `whitespace-nowrap`, restored specific column widths, and fixed horizontal stretching issues by removing hardcoded `min-w`.
+  - Introduced **Shadcn UI** (Radix-based) for advanced UI components like Popovers, maintaining design consistency with the brand theme.
+- **Dependency Cleanup**:
+  - Removed unused `framer-motion` and `class-variance-authority` npm dependencies.
+  - Deleted unused `Modal.tsx` component (not imported anywhere).
+- **DateRangePicker Redesign**:
+  - Updated layout with CALENDAR header and "Employees' Time Zone" dropdown with globe icon.
+  - Added "Preset Filters" sidebar with 9 options (Today, Yesterday, This Week, Last 7 Days, etc.).
+  - Implemented active preset highlighting with violet background.
+  - Styled Cancel/Apply buttons with violet theme (border and filled variants).
+- **Settings Layout Padding Fix**:
+  - Removed fixed height constraints from `settings/layout.tsx` to allow natural content flow.
+  - Content now respects parent padding without excessive whitespace.
+- **Employee Details Page**:
+  - Created dynamic route `/dashboard/employees/[id]` matching the design mockups.
+  - Implemented `EmptyState` component with custom CSS/SVG illustration (sleepy computer).
+  - Added header with employee meta-data (Team, Email) and tabbed navigation (Timesheets, Schedules, Projects).
+  - Implemented view toggles (Day/Shift) and filter controls.
+  - Linked employee names in the dashboard table to their respective details pages.
+- **Employee Details Refactoring**:
+  - Refactored `/dashboard/employees/[id]` to use nested layout pattern.
+  - Created `employees/[id]/layout.tsx` for shared header (breadcrumbs, employee info, tabs).
+  - Converted tabs to route-based navigation using Next.js `Link` components.
+  - Restructured `page.tsx` to contain only Timesheets-specific content.
+  - Implemented `schedules/page.tsx` with calendar grid, controls toolbar, and legend.
+- **Schedules Page**:
+  - Implemented calendar grid with 7-column layout (Sun-Sat) and 210px minimum column width.
+  - Added horizontal scrolling with proper overflow structure (outer clips, inner scrolls).
+  - Styled date cells with dimmed previous/next month dates and bold current month dates.
+  - Created legend for "Shifts" (purple) and "Time Off" (gray).
+  - Replicated controls toolbar from Timesheets (date picker and filter button).
+- **Dashboard Navigation**:
+  - Made "SnappyYak" logo in sidebar a clickable link routing to `/dashboard`.
+  - Added slim right border to sticky column cells in Employees table.
+- **Projects Page**:
+  - Implemented `projects/page.tsx` under Employee detail routes.
+  - Added "Today" date picker trigger, empty state message, and Projects Dashboard card.
+  - Dashboard includes Total Time and Utilization stat cards with CSS bar chart.
+  - Chart section expands to fill available vertical space using `flex-1`.
+- **Layout Fixes**:
+  - Updated `EmployeeLayout` to `min-h-full` for proper content overflow behavior.
+  - Fixed Schedules page calendar grid gap by making scrollable wrapper a flex container.
+  - Ensured both Projects and Schedules pages properly fill their containers.
+- **Documentation**:
+  - Added standard test credentials to `AGENTS.md` for future agentic workflows.
+- **Projects Dashboard**:
+  - Implemented `/dashboard/projects` with tabbed navigation ("Insightful" and "Integrated").
+  - **Insightful View**:
+    - Data table with fixed "Project Name" column (250px).
+    - Controls toolbar (Date Picker, Search).
+    - empty state component.
+    - "Task Statuses" info banner.
+  - **Integrated View**:
+    - Route: `/dashboard/projects/integrated`.
+    - Centered empty state without table structure.
+    - Inherits layouts and controls.
 ## Pending / Future Work
 - **Security Enhancements**:
   - Implement refresh tokens.
   - Add request rate limiting.
   - Tighter CORS configuration for production.
+  - Implement actual OAuth logic (currently placeholders).
+  - Implement actual email sending for password reset.
 - **Features**:
   - Email verification (placeholder exists).
   - Real productivity data ingestion (currently mocked).
   - User roles setup.
-- **DevOps**:
-  - Dockerize applications for easier deployment.
-  - Set up CI/CD pipelines.
+- **Infrastructure & UI**:
+    - Dockerize applications for easier deployment.
+    - Set up CI/CD pipelines.
+
+## Recently Completed (Security Audit)
+- **Timing Attack Fix**: Refactored login endpoint to use constant-time password verification, preventing user enumeration.

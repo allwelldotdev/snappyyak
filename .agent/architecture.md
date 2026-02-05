@@ -19,17 +19,45 @@ SnappyYak-Core/
 ├── frontend/            # Next.js Application (React)
 │   ├── app/             # App Router pages
 │   │   ├── auth/        # Login/Signup page
+│   │   │   └── forgot-password/ # Password reset placeholder
 │   │   ├── dashboard/   # Protected Dashboard
 │   │   │   ├── layout.tsx     # Shared sidebar & navigation
-│   │   │   ├── page.tsx       # Overview/Home dashboard
-│   │   │   └── settings/      # Personal settings page
+│   │   │   ├── page.tsx       # Overview/Home dashboard (Employees table)
+│   │   │   ├── employees/[id]/   # Employee details (nested layout)
+│   │   │   │   ├── layout.tsx    # Shared header (breadcrumbs, tabs)
+│   │   │   │   ├── page.tsx      # Timesheets view
+│   │   │   │   ├── schedules/    # Schedules calendar
+│   │   │   │   │   └── page.tsx  # Calendar grid with shifts/time-off
+│   │   │   │   └── projects/     # Projects dashboard
+│   │   │   │       └── page.tsx  # Stats cards and bar chart
+│   │   │   ├── time/          # Time and Attendance section
+│   │   │   │   ├── layout.tsx    # Shared header (title, tabs, view toggle)
+│   │   │   │   ├── page.tsx      # Timesheets data table
+│   │   │   │   ├── manual/       # Manual time entry
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── schedules/    # Team schedules
+│   │   │   │       └── page.tsx
+│   │   │   ├── projects/      # Projects dashboard
+│   │   │   │   ├── layout.tsx    # Shared header (tabs)
+│   │   │   │   ├── page.tsx      # Insightful view
+│   │   │   │   └── integrated/   # Integrated view
+│   │   │   │       └── page.tsx
+│   │   │   ├── download/      # Download page
+│   │   │   │   └── page.tsx   # OS-specific installation files
+│   │   │   └── settings/      # Personal settings
+│   │   │       ├── layout.tsx    # Shared header (tabs)
+│   │   │       ├── page.tsx      # Redirects to info
+│   │   │       ├── info/         # Password, social, 2FA
+│   │   │       │   └── page.tsx
+│   │   │       └── localization/ # Time zones, language
+│   │   │           └── page.tsx
 │   │   ├── globals.css  # Global styles
 │   │   └── layout.tsx   # Root layout with AuthProvider
 │   ├── components/      # UI Components
-│   │   ├── dashboard/   # Dashboard-specific components (UserMenu)
+│   │   ├── dashboard/   # Dashboard-specific (UserMenu, DateRangePicker, EmptyState)
 │   │   ├── layout/      # Layout components (Navbar)
 │   │   ├── providers/   # Context providers (AuthProvider)
-│   │   └── ui/          # Reusable UI components (Logo)
+│   │   └── ui/          # Reusable UI (Logo, Calendar, Select, Button, Popover)
 │   ├── public/          # Static assets
 │   ├── tailwind.config.ts # Tailwind config
 │   └── package.json     # Frontend dependencies
@@ -41,12 +69,28 @@ The application uses **Next.js App Router** for client-side routing.
 
 - **`/`**: Home Page - The main landing page.
 - **`/auth`**: Authentication Page - For user login/signup (handles `?mode=login|signup`).
-- **`/dashboard`**: User Dashboard - Protected area (requires valid JWT).
-  - **`/dashboard/settings`**: Personal Settings - Password change, social accounts, 2FA.
+- **`/auth/forgot-password`**: Forgot Password Placeholder - Simple email input UI for future reset flow.
+- **`/dashboard`**: User Dashboard - Protected area (requires valid JWT). Shows employees table.
+  - **`/dashboard/employees/[id]`**: Employee Details - Nested layout with shared header and tabs.
+    - **`/dashboard/employees/[id]`** (default): Timesheets view with data table.
+    - **`/dashboard/employees/[id]/schedules`**: Schedules calendar with grid layout.
+    - **`/dashboard/employees/[id]/projects`**: Projects dashboard with stats and bar chart.
+  - **`/dashboard/projects`**: Projects Dashboard - Tabbed interface.
+    - **`/dashboard/projects`** (default): "Insightful" view with projects table.
+    - **`/dashboard/projects/integrated`**: "Integrated" view with empty state.
+  - **`/dashboard/time`**: Time and Attendance - Nested layout with tabs (Timesheets, Manual Time, Schedules).
+    - **`/dashboard/time`** (default): Timesheets data table with filtering controls.
+    - **`/dashboard/time/manual`**: Manual time entry page.
+    - **`/dashboard/time/schedules`**: Team schedules with sticky headers.
+  - **`/dashboard/download`**: Download Page - OS-specific installation file downloads (Windows, macOS, Linux).
+  - **`/dashboard/settings`**: Personal Settings - Nested layout with tabs (Info, Localization).
+    - **`/dashboard/settings/info`** (default): Password change, social accounts, 2FA.
+    - **`/dashboard/settings/localization`**: Time zones, time format, language settings.
 
 ## Design System Implementation
-Styles are centrally managed via **Tailwind CSS**.
+Styles are managed via **Tailwind CSS** with advanced accessible components provided by **Shadcn UI** (Radix-based).
 
+- **UI Components**: Reusable components like `Popover`, `Tooltip`, and `Button` are located in `frontend/components/ui/`, following the Shadcn pattern.
 - **Configuration**: `frontend/tailwind.config.ts` defines design tokens (colors, fonts, radii).
 - **Fonts**: 
   - `Instrument Sans` (Google Fonts) for headings.

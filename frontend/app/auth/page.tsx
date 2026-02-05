@@ -8,6 +8,8 @@ import { Container } from '@/components/ui/Container';
 import { CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Logo } from '@/components/ui/Logo';
+import { GoogleLogo } from '@/components/ui/GoogleLogo';
+import { SlackLogo } from '@/components/ui/SlackLogo';
 
 function AuthContent() {
     const router = useRouter();
@@ -17,7 +19,9 @@ function AuthContent() {
 
     // Simple state to handle form interaction
     const [email, setEmail] = useState('');
+    const [fullname, setFullname] = useState('');
     const [password, setPassword] = useState('');
+
     const [showPassword, setShowPassword] = useState(false);
 
     const { login } = useAuth();
@@ -42,10 +46,17 @@ function AuthContent() {
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, fullname: mode === 'signup' ? fullname : undefined }),
             });
 
-            const data = await res.json();
+            let data;
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(text || 'Authentication failed');
+            }
 
             if (!res.ok) {
                 throw new Error(data.error || 'Authentication failed');
@@ -88,6 +99,19 @@ function AuthContent() {
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
+                            {mode === 'signup' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-brand-dark mb-2">Full Name</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={fullname}
+                                        onChange={(e) => setFullname(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
+                                        placeholder="John Doe"
+                                    />
+                                </div>
+                            )}
                             <div>
                                 <label className="block text-sm font-medium text-brand-dark mb-2">Email Address</label>
                                 <input
@@ -122,6 +146,14 @@ function AuthContent() {
                                 </div>
                             </div>
 
+                            {mode === 'login' && (
+                                <div className="flex justify-end -mt-4">
+                                    <Link href="/auth/forgot-password" className="text-brand-orange text-sm font-medium hover:underline">
+                                        Forgot password?
+                                    </Link>
+                                </div>
+                            )}
+
                             <Button fullWidth size="lg" disabled={isLoading}>
                                 {isLoading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
                             </Button>
@@ -139,6 +171,22 @@ function AuthContent() {
                                 </div>
                             </div>
                         )}
+
+                        <div className="mt-8 relative flex items-center justify-center">
+                            <div className="absolute inset-0 border-t border-gray-100 top-1/2"></div>
+                            <span className="relative bg-white px-3 text-sm text-text-muted font-medium uppercase">or</span>
+                        </div>
+
+                        <div className="mt-8 flex gap-4">
+                            <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-lg text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors">
+                                <GoogleLogo className="w-5 h-5" />
+                                {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
+                            </button>
+                            <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-lg text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors">
+                                <SlackLogo className="w-5 h-5" />
+                                {mode === 'login' ? 'Sign in with Slack' : 'Sign up with Slack'}
+                            </button>
+                        </div>
 
                         <div className="mt-8 pt-8 border-t border-gray-100 text-center">
                             <p className="text-text-muted">

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 interface User {
   id: number;
   email: string;
+  fullname: string;
 }
 
 interface AuthContextType {
@@ -30,18 +31,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'Authorization': `Bearer ${token}`
         }
       })
-      .then(res => {
-        if (res.ok) return res.json();
-        throw new Error('Failed to fetch user');
-      })
-      .then(data => {
-        setUser(data.user);
-      })
-      .catch(() => {
-        localStorage.removeItem('token');
-        setUser(null);
-      })
-      .finally(() => setLoading(false));
+        .then(res => {
+          if (res.ok) return res.json();
+          throw new Error('Failed to fetch user');
+        })
+        .then(data => {
+          setUser(data.user);
+        })
+        .catch(() => {
+          localStorage.removeItem('token');
+          setUser(null);
+        })
+        .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }

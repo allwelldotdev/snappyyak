@@ -2,7 +2,7 @@
 
 **Project**: SnappyYak Core Application  
 **Type**: Full-stack application with separate backend and frontend  
-**Last Updated**: 2026-01-29 (Password change, dashboard layout refactor, settings page, UI polish)
+**Last Updated**: 2026-02-03 (Settings Layout refactoring, Downloads page, Time and Attendance section)
 
 ## Tech Stack
 
@@ -38,17 +38,24 @@ SnappyYak-Core/
 ├── frontend/             # Next.js Application
 │   ├── app/              # App Router pages
 │   │   ├── auth/         # Login/Signup
+│   │   │   └── forgot-password/ # Password reset placeholder
 │   │   ├── dashboard/    # Protected dashboard
 │   │   │   ├── layout.tsx     # Shared sidebar & navigation
 │   │   │   ├── page.tsx       # Overview/Home dashboard
-│   │   │   └── settings/      # Personal settings page
+│   │   │   ├── employees/[id]/ # Employee details (nested layout)
+│   │   │   ├── time/          # Time and Attendance section
+│   │   │   ├── projects/      # Projects dashboard
+│   │   │   ├── download/      # OS-specific download page
+│   │   │   └── settings/      # Personal settings (nested layout)
+│   │   │       ├── info/      # Password, social accounts, 2FA
+│   │   │       └── localization/ # Time zones, language
 │   │   ├── layout.tsx    # Root layout
 │   │   └── page.tsx      # Home page
 │   ├── components/       # UI components
-│   │   ├── dashboard/    # Dashboard components (UserMenu)
+│   │   ├── dashboard/    # Dashboard components (UserMenu, DateRangePicker)
 │   │   ├── layout/       # Navbar, Footer
 │   │   ├── sections/     # Hero, Features, etc.
-│   │   ├── ui/           # Logo, Button, Container
+│   │   ├── ui/           # Logo, Button, Calendar, Select (Shadcn-based)
 │   │   └── providers/    # AuthProvider
 │   └── public/           # Static assets
 └── legacy_vite_app/      # Archived Hono/Vite codebase
@@ -90,6 +97,7 @@ SnappyYak-Core/
 - Use Diesel's type-safe query builders
 - Run `diesel migration run` after schema changes
 - **Password Change**: Validate current password before updating, hash new password with Argon2id
+- **Request Models**: Create specific structs for each endpoint's expected payload (e.g., `LoginRequest` vs `NewUser`) to prevent deserialization errors when fields differ (e.g., `fullname` required for signup but not login).
 
 ### Frontend (Next.js)
 - Use **'use client'** directive for components using hooks
@@ -162,11 +170,21 @@ SnappyYak-Core/
 - CORS configured for `http://localhost:3000` in development
 - No rate limiting implemented yet
 - No refresh tokens implemented yet
+- **Timing Attack Protection**: Login endpoint uses constant-time comparison for all authentication attempts
+
 
 ## Testing
 - **Backend**: Manual testing with curl or frontend integration
 - **Frontend**: Browser testing, verify auth flows
 - Focus on: signup → dashboard → logout → login
+
+### Standard Test Credentials
+**CRITICAL RULE**: For ALL testing cases involving login or signup, you MUST use these exact credentials. DO NOT create random test users like "Test User".
+- **Fullname**: `Allwell Developer`
+- **Email**: `dev@example.com`
+- **Password**: `password123`
+- **Note**: If login fails, these credentials may need to be re-seeded or you may need to sign up a new user if the DB was reset.
+- **Cleanup**: ALWAYS delete any test users created during verification (e.g., `sqlite3 backend/db.sqlite "DELETE FROM users WHERE email = 'test@example.com';"`). Keep the database clean with only the standard developer account.
 
 ## Dependencies Management
 
