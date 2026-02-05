@@ -9,7 +9,10 @@ pub struct User {
     pub email: String,
     pub fullname: String,
     #[serde(skip)]
-    pub password: String,
+    pub password: Option<String>,
+    #[serde(skip)]
+    pub temp_password: Option<String>,
+    pub role: String,
     pub created_at: chrono::NaiveDateTime,
 }
 
@@ -18,7 +21,9 @@ pub struct User {
 pub struct NewUser {
     pub email: String,
     pub fullname: String,
-    pub password: String,
+    pub password: Option<String>,
+    pub temp_password: Option<String>,
+    pub role: String,
 }
 
 #[derive(Deserialize)]
@@ -36,4 +41,23 @@ pub struct ChangePasswordRequest {
 #[derive(Deserialize)]
 pub struct UpdateProfileRequest {
     pub fullname: String,
+}
+
+#[derive(Deserialize)]
+pub struct AddEmployeeRequest {
+    pub name: String,
+    pub email: String,
+}
+
+#[derive(Serialize)]
+pub struct AddEmployeeResponse {
+    pub id: i32,
+    pub email: String,
+    pub temp_password: String,
+}
+
+#[derive(Deserialize)]
+pub struct CompleteOnboardingRequest {
+    pub temp_password: String,
+    pub new_password: String,
 }

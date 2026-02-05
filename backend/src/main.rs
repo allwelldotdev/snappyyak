@@ -21,11 +21,16 @@ async fn main() {
     let pool = db::establish_connection(&database_url);
 
     let app = Router::new()
-        .route("/api/auth/signup", post(routes::signup))
-        .route("/api/auth/login", post(routes::login))
-        .route("/api/auth/me", get(routes::me))
-        .route("/api/auth/update-profile", post(routes::update_profile))
-        .route("/api/auth/change-password", post(routes::change_password))
+        .route("/api/auth/signup", post(routes::auth::signup))
+        .route("/api/auth/login", post(routes::auth::login))
+        .route("/api/auth/me", get(routes::auth::me))
+        .route("/api/auth/update-profile", post(routes::auth::update_profile))
+        .route("/api/auth/change-password", post(routes::auth::change_password))
+        // Employer routes
+        .route("/api/employer/employees", post(routes::employer::add_employee).get(routes::employer::list_employees))
+        .route("/api/employer/employees/:id", get(routes::employer::get_employee).delete(routes::employer::delete_employee))
+        // Onboarding routes
+        .route("/api/onboarding/complete", post(routes::onboarding::complete_onboarding))
         .layer(CorsLayer::permissive())
         .with_state(pool);
 

@@ -72,8 +72,17 @@ pub async fn signup(
     // Hash password using Argon2
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
+    
+    let password_unwrap = payload.password.clone().unwrap_or_default(); // Should be provided for signup
+    if password_unwrap.is_empty() {
+         return Err((
+            StatusCode::BAD_REQUEST,
+            Json(json!({ "error": "Password is required" })),
+        ));
+    }
+
     let password_hash = argon2
-        .hash_password(payload.password.as_bytes(), &salt)
+        .hash_password(password_unwrap.as_bytes(), &salt)
         .map_err(|e| {
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
@@ -85,7 +94,9 @@ pub async fn signup(
     let new_user = NewUser {
         email: payload.email,
         fullname: payload.fullname,
-        password: password_hash,
+        password: Some(password_hash),
+        temp_password: None,
+        role: "employer".to_string(), // Default to employer for self-signup
     };
 
     let user = diesel::insert_into(users::table)
@@ -98,7 +109,8 @@ pub async fn signup(
             )
         })?;
 
-    let token = create_jwt(user.id, &user.email).map_err(|e| {
+    // New employers don't need onboarding
+    let token = create_jwt(user.id, &user.email, &user.role, false).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({ "error": e.to_string() })),
@@ -107,7 +119,7 @@ pub async fn signup(
 
     Ok((
         StatusCode::CREATED,
-        Json(json!({ "token": token, "user": { "id": user.id, "email": user.email, "fullname": user.fullname } })),
+        Json(json!({ "token": token, "user": { "id": user.id, "email": user.email, "fullname": user.fullname, "role": user.role, "needs_onboarding": false } })),
     ))
 }
 
@@ -127,7 +139,7 @@ pub async fn login(
         )
     })?;
 
-    let user = users::table
+    let user_opt = users::table
         .filter(users::email.eq(&payload.email))
         .first::<User>(&mut conn)
         .optional()
@@ -138,12 +150,23 @@ pub async fn login(
             )
         })?;
 
-    let (password_hash, user_id, user_email, user_fullname) = if let Some(user) = &user {
-        (user.password.as_str(), Some(user.id), Some(&user.email), Some(&user.fullname))
+    // We need to handle verifying against either password (priority) or temp_password
+    let (target_hash, user_id, user_email, user_fullname, user_role, needs_onb) = if let Some(user) = &user_opt {
+        let needs_onboarding = user.role == "employee" && user.password.is_none();
+        
+        let hash_to_check = if user.password.is_some() {
+             user.password.as_deref()
+        } else {
+             user.temp_password.as_deref()
+        };
+        
+        (hash_to_check, Some(user.id), Some(&user.email), Some(&user.fullname), Some(&user.role), needs_onboarding)
     } else {
-        (DUMMY_HASH, None, None, None)
+        (Some(DUMMY_HASH), None, None, None, None, false)
     };
 
+    let password_hash = target_hash.unwrap_or(DUMMY_HASH);
+    
     let parsed_hash = PasswordHash::new(password_hash).map_err(|_e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -152,15 +175,15 @@ pub async fn login(
     })?;
 
     if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
-        if let (Some(id), Some(email), Some(fullname)) = (user_id, user_email, user_fullname) {
-            let token = create_jwt(id, email).map_err(|e| {
+        if let (Some(id), Some(email), Some(fullname), Some(role)) = (user_id, user_email, user_fullname, user_role) {
+            let token = create_jwt(id, email, role, needs_onb).map_err(|e| {
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     Json(json!({ "error": e.to_string() })),
                 )
             })?;
             return Ok(Json(
-                json!({ "token": token, "user": { "id": id, "email": email, "fullname": fullname } }),
+                json!({ "token": token, "user": { "id": id, "email": email, "fullname": fullname, "role": role, "needs_onboarding": needs_onb } }),
             ));
         }
     }
@@ -194,11 +217,14 @@ pub async fn me(
         })?;
 
     if let Some(user) = user {
+        let needs_onboarding = user.role == "employee" && user.password.is_none();
         return Ok(Json(json!({
             "user": {
                 "id": user.id,
                 "email": user.email,
                 "fullname": user.fullname,
+                "role": user.role,
+                "needs_onboarding": needs_onboarding
             }
         })));
     }
@@ -258,8 +284,10 @@ pub async fn change_password(
         })?;
 
     if let Some(user) = user {
-        // Verify current password
-        let parsed_hash = PasswordHash::new(&user.password).map_err(|_e| {
+        // Verify current password - Must have a password to change it here
+        let current_password_hash = user.password.as_deref().unwrap_or(DUMMY_HASH);
+        
+        let parsed_hash = PasswordHash::new(current_password_hash).map_err(|_e| {
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({ "error": "Invalid password hash in database" })),
@@ -291,7 +319,7 @@ pub async fn change_password(
 
         // Update password
         diesel::update(users::table.find(auth_user.user_id))
-            .set(users::password.eq(new_password_hash))
+            .set(users::password.eq(Some(new_password_hash))) // Wrap in Some
             .execute(&mut conn)
             .map_err(|e| {
                 (

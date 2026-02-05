@@ -5,7 +5,9 @@ diesel::table! {
         id -> Integer,
         email -> Text,
         fullname -> Text,
-        password -> Text,
+        password -> Nullable<Text>,
+        temp_password -> Nullable<Text>,
+        role -> Text,
         created_at -> Timestamp,
     }
 }
