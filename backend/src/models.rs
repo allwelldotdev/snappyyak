@@ -33,6 +33,13 @@ pub struct LoginRequest {
 }
 
 #[derive(Deserialize)]
+pub struct SignupRequest {
+    pub email: String,
+    pub fullname: String,
+    pub password: String,
+}
+
+#[derive(Deserialize)]
 pub struct ChangePasswordRequest {
     pub current_password: String,
     pub new_password: String,

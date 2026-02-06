@@ -179,12 +179,31 @@ SnappyYak-Core/
 - Focus on: signup → dashboard → logout → login
 
 ### Standard Test Credentials
-**CRITICAL RULE**: For ALL testing cases involving login or signup, you MUST use these exact credentials. DO NOT create random test users like "Test User".
-- **Fullname**: `Allwell Developer`
-- **Email**: `dev@example.com`
+**CRITICAL RULE**: For ALL testing cases involving login or signup, you MUST use these exact credentials. DO NOT create random test users or make up your own credentials.
+
+#### Employer Account
+For agentic testing and walkthrough as an **Employer**:
+- **Fullname**: `Allwell Employer`
+- **Email**: `employer@company.com`
 - **Password**: `password123`
-- **Note**: If login fails, these credentials may need to be re-seeded or you may need to sign up a new user if the DB was reset.
-- **Cleanup**: ALWAYS delete any test users created during verification (e.g., `sqlite3 backend/db.sqlite "DELETE FROM users WHERE email = 'test@example.com';"`). Keep the database clean with only the standard developer account.
+
+#### Employee Accounts
+For agentic testing and walkthrough as an **Employee**, use one or all of the following (where applicable):
+
+**Employee 1:**
+- **Fullname**: `John Doe`
+- **Email**: `john.doe@company.com`
+- **Password**: `password123`
+
+**Employee 2:**
+- **Fullname**: `Barry Scot`
+- **Email**: `barry.scot@company.com`
+- **Password**: `password123`
+
+#### Notes
+- If login fails, these credentials may need to be re-seeded or you may need to sign up a new user if the DB was reset.
+- ENSURE NOT TO CREATE YOUR OWN CREDENTIALS. Use what has been created or ask questions where unsure.
+- **Cleanup**: ALWAYS delete any test users created during verification outside of the standard credentials listed above. Keep the database clean with only the standard test accounts.
 
 ## Dependencies Management
 

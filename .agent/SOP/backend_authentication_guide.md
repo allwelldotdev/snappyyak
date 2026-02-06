@@ -197,11 +197,27 @@ diesel migration redo
 ```
 
 ### Testing Auth Flow
+
+#### Standard Test Credentials
+**CRITICAL**: Use these exact credentials for all testing. DO NOT create your own.
+
+**Employer Account:**
+- Name: `Allwell Employer`
+- Email: `employer@company.com`
+- Password: `password123`
+
+**Employee Accounts:**
+- Name: `John Doe` | Email: `john.doe@company.com` | Password: `password123`
+- Name: `Barry Scot` | Email: `barry.scot@company.com` | Password: `password123`
+
+#### Testing Steps
 1. Navigate to `http://localhost:3000/auth`
-2. Create account (signup)
-3. Verify redirect to dashboard
-4. Check user email displayed
+2. Create account (signup) using employer credentials
+3. Verify redirect to `/employer` dashboard
+4. Check user email and role displayed
 5. Logout and login again
+6. Test employee onboarding flow (if applicable)
+
 
 ---
 

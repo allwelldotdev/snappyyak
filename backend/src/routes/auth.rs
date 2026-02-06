@@ -23,7 +23,7 @@ type Conn = PooledConnection<ConnectionManager<SqliteConnection>>;
 
 pub async fn signup(
     State(pool): State<DbPool>,
-    Json(mut payload): Json<NewUser>,
+    Json(mut payload): Json<crate::models::SignupRequest>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<Value>)> {
     // Sanitize input
     payload.email = payload.email.trim().to_string();
@@ -73,8 +73,8 @@ pub async fn signup(
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
     
-    let password_unwrap = payload.password.clone().unwrap_or_default(); // Should be provided for signup
-    if password_unwrap.is_empty() {
+    // Password is required in SignupRequest, so we can use it directly
+    if payload.password.is_empty() {
          return Err((
             StatusCode::BAD_REQUEST,
             Json(json!({ "error": "Password is required" })),
@@ -82,7 +82,7 @@ pub async fn signup(
     }
 
     let password_hash = argon2
-        .hash_password(password_unwrap.as_bytes(), &salt)
+        .hash_password(payload.password.as_bytes(), &salt)
         .map_err(|e| {
             (
                 StatusCode::INTERNAL_SERVER_ERROR,

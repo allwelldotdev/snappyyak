@@ -1,6 +1,14 @@
 import React from 'react';
 
-export const EmptyState = () => {
+interface EmptyStateProps {
+    title?: string;
+    description?: string;
+}
+
+export const EmptyState = ({
+    title = "No data for the selected period",
+    description = "Try choosing a different time period in the calendar."
+}: EmptyStateProps) => {
     return (
         <div className="flex flex-col items-center justify-center py-20 bg-white rounded-b-xl border-t-0">
             {/* Illustration */}
@@ -29,8 +37,8 @@ export const EmptyState = () => {
             </div>
 
             {/* Text Content */}
-            <h3 className="text-xl font-bold font-heading text-brand-dark mb-2">No data for the selected period</h3>
-            <p className="text-gray-500 font-body">Try choosing a different time period in the calendar.</p>
+            <h3 className="text-xl font-bold font-heading text-brand-dark mb-2">{title}</h3>
+            <p className="text-gray-500 font-body">{description}</p>
 
             {/* Bottom Timeline Illustration (Mock) */}
             <div className="mt-12 opacity-40 grayscale blur-[1px] select-none pointer-events-none">
