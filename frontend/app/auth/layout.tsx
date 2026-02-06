@@ -1,22 +1,13 @@
 'use client';
 
-import { useRequireAuth } from '@/components/providers/useRequireAuth';
 import { Container } from '@/components/ui/Container';
 import { Logo } from '@/components/ui/Logo';
 
-export default function OnboardingLayout({
+export default function AuthLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    // We don't strictly enforce 'employee' role here via hook because the hook redirects TO onboarding if needed.
-    // Just ensure auth.
-    const { user, loading } = useRequireAuth();
-
-    if (loading || !user) {
-        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-    }
-
     return (
         <div className="min-h-screen bg-bg-main flex flex-col font-body">
             <nav className="p-6 absolute top-0 left-0 w-full z-10">

@@ -79,12 +79,21 @@ The project includes a robust local authentication system, now powered by Rust f
 ## 🧪 Testing the Application
 
 ### 1. Via UI (Verified)
+
+#### Employer Flow
 1. Start both servers (`cargo run` in backend, `npm run dev` in frontend).
-2. Navigate to `http://localhost:3000` to see the **Original Premium Design**.
-3. Click "Get Started" or "Log In" to access the Auth page.
-4. **Signup:** Create a new account to be redirected to the Dashboard.
-5. **Dashboard:** Verify your email is displayed and productivity stats are shown.
-6. **Logout:** Use the sidebar "Log Out" button to return to the auth page.
+2. Navigate to `http://localhost:3000`.
+3. Click "Get Started" or "Sign Up" to create an **Employer** account.
+4. After signup, you'll be redirected to the **Employer Dashboard** (`/employer`).
+5. Click "Add New Employee" → "Personal Computers" to add an employee.
+6. Fill in name and email → receive temporary password to share with employee.
+
+#### Employee Flow
+1. After employer creates employee account with temp password:
+2. Navigate to Login page and use employee email + temp password.
+3. First login redirects to **Onboarding** (`/onboarding`).
+4. Set permanent password → redirected to **Employee Dashboard** (`/dashboard`).
+5. Subsequent logins go directly to Employee Dashboard.
 
 ---
 

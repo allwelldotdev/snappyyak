@@ -140,6 +140,34 @@
     - Updated date format to "Jan 26, 2026" style for period displays.
   - **JWT Updates**: Enhanced JWT payload with `role` and `needs_onboarding` fields for granular access control.
   - **Verification**: Both backend (`cargo check`) and frontend (`npm run build`) compile successfully.
+- **Add Employee Modal**:
+  - Created `AddEmployeeModal` component (`components/employer/AddEmployeeModal.tsx`) with:
+    - Centered backdrop modal with header and X close button.
+    - "Choose Your Employee's Computer Type" selection screen.
+    - Two interactive cards: "Company Computers" and "Personal Computers".
+    - Help link with question icon and billing info banner.
+    - Card selection state with indigo highlight.
+    - **Navigation**: "Personal Computers" card navigates to `/employer/employees/add`.
+  - Integrated modal into employer dashboard, triggered by "Add New Employee" button.
+- **Add Employee Page** (`employer/employees/add/page.tsx`):
+  - Form with Full Name and Email Address fields.
+  - **Auto-focus**: Full Name field focuses automatically on load.
+  - API integration with `POST /api/employer/employees`.
+  - Loading state with spinner during submission.
+  - Error handling with red error banner display.
+  - Cancel button to return to employer dashboard.
+- **TempPasswordDisplay Component** (`components/employer/TempPasswordDisplay.tsx`):
+  - Success modal with green checkmark icon.
+  - Displays employee email and generated temp password.
+  - Copy-to-clipboard button with visual feedback (checkmark on copy).
+  - Warning banner about one-time password display.
+  - "Done" button closes modal and redirects to `/employer`.
+- **AuthProvider Enhancement**: Added `token` to AuthContext for API calls.
+- **Auth & Onboarding Layouts**:
+  - Implemented shared `AuthLayout` (`app/auth/layout.tsx`) for consistent branding.
+  - Updated `OnboardingLayout` to match Auth design (Logo placement, background decoration).
+
+
 
 ## Pending / Future Work
 - **Security Enhancements**:

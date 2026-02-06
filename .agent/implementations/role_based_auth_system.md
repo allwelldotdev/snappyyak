@@ -2,7 +2,7 @@
 
 **Date**: 2026-02-05  
 **Feature**: Multi-role authentication with Employer and Employee user types  
-**Status**: ✅ Implemented (Employer Dashboard complete, Employee Onboarding pending)
+**Status**: ✅ Implemented (Phases 1-5 complete: Backend, Frontend Auth, Employer Dashboard, Employee Onboarding)
 
 ---
 
@@ -150,10 +150,14 @@ frontend/app/
 - Add route protection logic in `useAuth()` hook
 
 **New Components**:
-- `EmployerSidebar` (similar to current dashboard sidebar)
-- `AddEmployeeForm` (name, email inputs)
-- `OnboardingForm` (current temp password, new password, confirm password)
-- `TempPasswordDisplay` (show generated temp_password with copy-to-clipboard)
+- `AddEmployeeModal` (`components/employer/AddEmployeeModal.tsx`) - Modal for choosing employee computer type, navigates to add page
+- `TempPasswordDisplay` (`components/employer/TempPasswordDisplay.tsx`) - Modal showing generated temp_password with copy-to-clipboard
+- `OnboardingForm` (implemented directly in `app/onboarding/page.tsx`) - Temp password, new password, confirm password inputs
+
+**Layout Enhancements**:
+- `app/auth/layout.tsx` (NEW) - Shared layout for auth pages with logo and background decoration
+- `app/onboarding/layout.tsx` (UPDATED) - Now matches auth layout design for consistency
+- `app/employer/employees/add/page.tsx` (NEW) - Form for adding employee (name, email with auto-focus)
 
 ---
 
@@ -800,19 +804,22 @@ graph TD
 - [x] Create `employer/layout.tsx`: Employer sidebar with custom navigation
 - [x] Create `employer/page.tsx`: Productivity Trends overview with period controls
 - [ ] Create `employer/employees/page.tsx`: Employee list with "Add New Employee" button
-- [ ] Create `employer/employees/add/page.tsx`: Add employee form (name, email)
-- [ ] Create `TempPasswordDisplay` component: Show generated temp password with copy-to-clipboard
-- [ ] Integrate API calls: Add employee, list employees
+- [x] Create `employer/employees/add/page.tsx`: Add employee form (name, email)
+- [x] Create `TempPasswordDisplay` component: Show generated temp password with copy-to-clipboard
+- [x] Integrate API calls: Add employee, list employees
+
 
 ### Phase 5: Frontend - Employee Onboarding
-- [ ] Create `onboarding/page.tsx`: Password change form
-- [ ] Create `OnboardingForm` component:
-  - [ ] Current Temp Password input
-  - [ ] New Password input (with visibility toggle)
-  - [ ] Confirm Password input
-  - [ ] Validation: Passwords match, min 8 chars
-- [ ] Integrate API: `POST /api/onboarding/complete`
-- [ ] Handle success: Update JWT, redirect to `/dashboard`
+- [x] Create `onboarding/page.tsx`: Password change form
+- [x] Create `OnboardingForm` component:
+  - [x] Current Temp Password input
+  - [x] New Password input (with visibility toggle)
+  - [x] Confirm Password input
+  - [x] Validation: Passwords match, min 8 chars
+- [x] Integrate API: `POST /api/onboarding/complete`
+- [x] Handle success: Update JWT, redirect to `/dashboard`
+- [x] Update `onboarding/layout.tsx`: Match auth page design (logo, background)
+
 
 ### Phase 6: Testing & Verification
 - [ ] Test Employer signup flow (browser)

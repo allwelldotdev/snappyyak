@@ -13,6 +13,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
+  token: string | null;
   login: (token: string, user: User) => void;
   logout: () => void;
   loading: boolean;
@@ -22,15 +23,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
       fetch('http://localhost:8080/api/auth/me', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${storedToken}`
         }
       })
         .then(res => {
@@ -42,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })
         .catch(() => {
           localStorage.removeItem('token');
+          setToken(null);
           setUser(null);
         })
         .finally(() => setLoading(false));
@@ -50,8 +54,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = (token: string, user: User) => {
-    localStorage.setItem('token', token);
+  const login = (newToken: string, user: User) => {
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
     setUser(user);
 
     // Role-based redirect logic
@@ -66,12 +71,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('token');
+    setToken(null);
     setUser(null);
     router.push('/auth');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

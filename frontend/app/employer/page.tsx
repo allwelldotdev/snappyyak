@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { Calendar as CalendarIcon, Download, Bell, ArrowRightLeft } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
-import Link from 'next/link';
 import { EmptyState } from '@/components/dashboard/EmptyState';
+import { AddEmployeeModal } from '@/components/employer/AddEmployeeModal';
 
 export default function EmployerDashboard() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     return (
         <div className="flex flex-col h-full">
             {/* Header with Title and Add Employee Button */}
@@ -15,14 +18,13 @@ export default function EmployerDashboard() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Link
-                        href="/employer/employees/add"
+                    <button
+                        onClick={() => setIsModalOpen(true)}
                         className="bg-brand-orange hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
                     >
                         Add New Employee
-                    </Link>
+                    </button>
 
-                    {/* Alert Icon with Notification Badge */}
                     {/* Alert Icon with Notification Badge */}
                     <button className="relative p-2 text-gray-500 hover:text-brand-dark transition-colors group">
                         <span className="sr-only">Notifications</span>
@@ -82,6 +84,12 @@ export default function EmployerDashboard() {
                 // description="There is no productivity data available for the reference period you have selected. Try selecting a different date range or invite employees to start tracking time."
                 />
             </div>
+
+            {/* Add Employee Modal */}
+            <AddEmployeeModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 }
