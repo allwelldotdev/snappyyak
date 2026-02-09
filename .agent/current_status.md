@@ -12,12 +12,13 @@
   - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
 
 ## Recently Completed
-- **Settings Layout Refactoring**:
-  - Created `/dashboard/settings/layout.tsx` with shared header and tabbed navigation ("Info" and "Localization").
-  - Migrated existing settings content to `/dashboard/settings/info/page.tsx` as the default route.
-  - Implemented `/dashboard/settings/localization/page.tsx` with Time & Language settings (time zones, time format, language dropdown).
-  - Updated `/dashboard/settings/page.tsx` to redirect to the info page.
-  - Tab navigation follows the same pattern as the Projects layout.
+- **Unified Settings Route Refactoring**:
+  - Moved Personal Settings from `/dashboard/settings` to `/settings` for role-agnostic access.
+  - Implemented role-based layout wrapper in `/settings/layout.tsx` that dynamically wraps content in `EmployerLayout` or `DashboardLayout` based on user role.
+  - Updated `UserMenu.tsx` to link to `/settings/info` instead of `/dashboard/settings`.
+  - Removed "Settings" link from Employee dashboard sidebar (no longer needed).
+  - Personal Settings now maintains consistent functionality while being cleanly separated from dashboard-specific navigation.
+
 - **Downloads Page**:
   - Implemented `/dashboard/download` page for OS-specific installation file downloads.
   - Centered card UI with Windows, macOS, and Linux download options.

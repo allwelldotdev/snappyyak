@@ -48,13 +48,13 @@ SnappyYak-Core/
 │   │   │   │       └── page.tsx
 │   │   │   ├── download/      # Download page
 │   │   │   │   └── page.tsx   # OS-specific installation files
-│   │   │   └── settings/      # Personal settings
-│   │   │       ├── layout.tsx    # Shared header (tabs)
-│   │   │       ├── page.tsx      # Redirects to info
-│   │   │       ├── info/         # Password, social, 2FA
-│   │   │       │   └── page.tsx
-│   │   │       └── localization/ # Time zones, language
-│   │   │           └── page.tsx
+│   │   ├── settings/      # Personal settings (shared between roles)
+│   │   │   ├── layout.tsx    # Role-based layout wrapper (Employer/Employee)
+│   │   │   ├── page.tsx      # Redirects to info
+│   │   │   ├── info/         # Password, social, 2FA
+│   │   │   │   └── page.tsx
+│   │   │   └── localization/ # Time zones, language
+│   │   │       └── page.tsx
 │   │   ├── employer/    # Employer Dashboard (Protected)
 │   │   │   ├── layout.tsx     # Employer portal layout
 │   │   │   └── page.tsx       # Employer dashboard home
@@ -94,15 +94,17 @@ The application uses **Next.js App Router** for client-side routing.
     - **`/dashboard/time/manual`**: Manual time entry page.
     - **`/dashboard/time/schedules`**: Team schedules with sticky headers.
   - **`/dashboard/download`**: Download Page - OS-specific installation file downloads (Windows, macOS, Linux).
-  - **`/dashboard/settings`**: Personal Settings - Nested layout with tabs (Info, Localization).
-    - **`/dashboard/settings/info`** (default): Password change, social accounts, 2FA.
-    - **`/dashboard/settings/localization`**: Time zones, time format, language settings.
 
 ### Role-Based Authentication Routes
 > **Status**: ✅ **Implemented**. See `.agent/implementations/role_based_auth_system.md` for full specification.
 
 **Authentication & Onboarding:**
 - **`/onboarding`**: Employee Onboarding - Password change form for first-time employee login (temp password → new password). Protected route for employees with `needs_onboarding: true`.
+
+**Shared Routes:**
+- **`/settings`**: Personal Settings - Role-aware route that wraps in appropriate layout (Employer/Employee).
+  - **`/settings/info`** (default): Password change, social accounts, 2FA.
+  - **`/settings/localization`**: Time zones, time format, language settings.
 
 **Employer Dashboard:**
 - **`/employer`**: Employer Dashboard - Protected area (requires `role: employer`). Basic dashboard with employee management placeholder.

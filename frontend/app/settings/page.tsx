@@ -7,7 +7,7 @@ export default function SettingsPage() {
     const router = useRouter();
 
     useEffect(() => {
-        router.replace('/dashboard/settings/info');
+        router.replace('/settings/info');
     }, [router]);
 
     return (

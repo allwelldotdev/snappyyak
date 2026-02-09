@@ -51,7 +51,7 @@ export function UserMenu() {
                         <p className="text-xs text-gray-500">Pro Plan</p>
                     </div>
 
-                    <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-orange transition-colors">
+                    <Link href="/settings/info" className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-orange transition-colors">
                         <Settings className="w-4 h-4" />
                         <span>Personal Settings</span>
                     </Link>

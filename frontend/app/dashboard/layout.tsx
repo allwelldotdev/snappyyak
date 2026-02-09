@@ -31,7 +31,6 @@ export default function DashboardLayout({
                         { href: '/dashboard/time', label: 'Time and Attendance', icon: CalendarDays },
                         { href: '/dashboard/projects', label: 'Projects', icon: Briefcase },
                         { href: '/dashboard/download', label: 'Download', icon: CloudDownload },
-                        { href: '/dashboard/settings', label: 'Settings', icon: Settings },
                     ].map((link) => {
                         const Icon = link.icon;
                         const isActive = link.href === pathname || (link.href !== '/dashboard' && pathname.startsWith(link.href)) || (link.href === '/dashboard' && pathname.startsWith('/dashboard/employees/'));
