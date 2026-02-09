@@ -12,6 +12,17 @@
   - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
 
 ## Recently Completed
+- **Alerts Page Implementation**:
+  - Created `/employer/alerts` route with nested layout pattern.
+  - Implemented tabbed navigation (Overview, Logs) with active state highlighting.
+  - Built Alerts Overview page with:
+    - Header with "New Alert" button (brand-orange) and notification bell with badge.
+    - Controls row with date picker, "Compare to" dropdown, "Add Filter" button, and export action.
+    - Empty state component for no data scenario.
+  - Built Alerts Logs page with identical controls row and dedicated empty state.
+  - All styling follows employer dashboard design patterns with indigo color scheme for controls.
+  - Verified implementation in browser against design requirements.
+
 - **Unified Settings Route Refactoring**:
   - Moved Personal Settings from `/dashboard/settings` to `/settings` for role-agnostic access.
   - Implemented role-based layout wrapper in `/settings/layout.tsx` that dynamically wraps content in `EmployerLayout` or `DashboardLayout` based on user role.

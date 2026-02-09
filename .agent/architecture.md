@@ -108,6 +108,9 @@ The application uses **Next.js App Router** for client-side routing.
 
 **Employer Dashboard:**
 - **`/employer`**: Employer Dashboard - Protected area (requires `role: employer`). Basic dashboard with employee management placeholder.
+- **`/employer/alerts`**: Alerts Dashboard - Nested layout with tabs (Overview, Logs).
+  - **`/employer/alerts`** (default): Overview page with date controls, filters, and empty state.
+  - **`/employer/alerts/logs`**: Logs page displaying alert history with controls and empty state.
 
 **Role-Based Routing Logic:**
 - After login, users are routed based on JWT claims:
