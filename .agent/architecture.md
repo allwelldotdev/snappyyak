@@ -108,6 +108,11 @@ The application uses **Next.js App Router** for client-side routing.
 
 **Employer Dashboard:**
 - **`/employer`**: Employer Dashboard - Protected area (requires `role: employer`). Basic dashboard with employee management placeholder.
+- **`/employer/employees`**: Employees Management - Tabbed interface with status-based views.
+  - **`/employer/employees`** (default): Active employees list with metrics.
+  - **`/employer/employees/pending`**: Pending employees awaiting onboarding.
+  - **`/employer/employees/deactivated`**: Deactivated employees archive.
+  - **`/employer/employees/add`**: Add new employee form.
 - **`/employer/alerts`**: Alerts Dashboard - Nested layout with tabs (Overview, Logs).
   - **`/employer/alerts`** (default): Overview page with date controls, filters, and empty state.
   - **`/employer/alerts/logs`**: Logs page displaying alert history with controls and empty state.
@@ -134,7 +139,9 @@ Styles are managed via **Tailwind CSS** with advanced accessible components prov
 The backend is a standalone **Rust** application using the **Axum** framework.
 
 - **Server**: Runs on port `8080`.
-- **Database**: SQLite file managed by Diesel ORM.
+- **Database**: SQLite file managed by Diesel ORM with many-to-many relationships.
+  - **Core Tables**: `users`, `employer_employees` (junction), `employee_metrics`
+  - **Relationship Model**: Employers and employees linked via `employer_employees` junction table with status tracking.
 - **Authentication**: 
   - JWT (JSON Web Tokens) for stateless sessions.
   - `Argon2id` for password hashing.
@@ -145,12 +152,13 @@ The backend is a standalone **Rust** application using the **Axum** framework.
     - `GET /api/auth/me`: Validate session token (returns role and onboarding status).
     - `POST /api/auth/change-password`: Update user password (requires valid JWT).
   - **Employee Management** (`routes/employer.rs`):
-    - `POST /api/employer/employees`: Add new employee (auto-generates temp password).
-    - `GET /api/employer/employees`: List all employees.
+    - `POST /api/employer/employees`: Add new employee with junction table relationship (auto-generates temp password).
+    - `GET /api/employer/employees?status={active|pending|deactivated}`: List employees filtered by relationship status.
     - `GET /api/employer/employees/:id`: Get employee details.
-    - `DELETE /api/employer/employees/:id`: Remove employee.
+    - `PATCH /api/employer/employees/:id/status`: Update employee relationship status (e.g., deactivate).
+    - `DELETE /api/employer/employees/:id`: Remove employee relationship.
   - **Onboarding** (`routes/onboarding.rs`):
-    - `POST /api/onboarding/complete`: Complete employee onboarding (verify temp password, set new password).
+    - `POST /api/onboarding/complete`: Complete employee onboarding (verify temp password, set new password, update junction status to 'active').
 
 ## Integration
 - The Frontend communicates with the Backend via standard HTTP requests to `http://localhost:8080`.

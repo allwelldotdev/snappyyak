@@ -178,6 +178,23 @@
 - **Auth & Onboarding Layouts**:
   - Implemented shared `AuthLayout` (`app/auth/layout.tsx`) for consistent branding.
   - Updated `OnboardingLayout` to match Auth design (Logo placement, background decoration).
+- **Employee Database Integration**:
+  - **Backend**:
+    - Updated `schema.rs`: Fixed primary key types from `Nullable<Integer>` to `Integer`.
+    - Added `employer_employees` junction table for many-to-many relationship with `status` field (`pending`, `active`, `deactivated`).
+    - Added `employee_metrics` table for future metrics tracking.
+    - Rewrote `routes/employer.rs`:
+      - `POST /api/employer/employees`: Creates employee and junction relationship.
+      - `GET /api/employer/employees?status={status}`: Lists employees filtered by relationship status.
+      - `PATCH /api/employer/employees/:id/status`: Updates employee status for deactivation workflow.
+    - Updated `routes/onboarding.rs`: Sets junction table status to `active` upon onboarding completion.
+  - **Frontend**:
+    - Created `EmployeeActionsMenu` component: Three-dot dropdown menu with deactivation workflow and confirmation.
+    - Implemented `/employer/employees` (Active): Fetches active employees, displays metrics, search filtering, column toggles.
+    - Implemented `/employer/employees/pending` (Pending): Shows employees awaiting onboarding with "Invitation Sent" badge.
+    - Implemented `/employer/employees/deactivated` (Deactivated): Lists deactivated employees with muted styling and "Deactivated" badge.
+    - All pages include loading states, error handling, and empty state components.
+  - **Verified**: End-to-end workflow tested in browser — adding employees, viewing by status, and deactivation all working correctly.
 
 
 

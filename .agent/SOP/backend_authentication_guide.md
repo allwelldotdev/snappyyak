@@ -97,15 +97,23 @@ backend/src/
   2. Generate 12-char temp password
   3. Hash temp password with Argon2id
   4. Create employee with `role: 'employee'`, null password
+  5. Create junction table record with employer_id, employee_id, status: 'pending'
 - **Output**: `{ id: number, email: string, temp_password: string }`
 
 #### GET /api/employer/employees
 - **Headers**: `Authorization: Bearer <token>` (Employer only)
-- **Output**: `{ employees: [{ id, email, fullname, onboarded, created_at }] }`
+- **Query Params**: `status` (optional): Filter by `active`, `pending`, or `deactivated`
+- **Output**: `{ employees: [{ id, email, fullname, status, onboarded, created_at }] }`
 
 #### GET /api/employer/employees/:id
 - **Headers**: `Authorization: Bearer <token>` (Employer only)
-- **Output**: `{ id, email, fullname, onboarded, created_at }`
+- **Output**: `{ id, email, fullname, status, onboarded, created_at }`
+
+#### PATCH /api/employer/employees/:id/status
+- **Headers**: `Authorization: Bearer <token>` (Employer only)
+- **Input**: `{ status: string }` (e.g., "deactivated")
+- **Process**: Updates the employer_employees junction table status for the relationship
+- **Output**: `{ message: "Status updated successfully" }`
 
 #### DELETE /api/employer/employees/:id
 - **Headers**: `Authorization: Bearer <token>` (Employer only)
@@ -119,7 +127,8 @@ backend/src/
   2. Validate new_password (min 8 chars)
   3. Hash new password
   4. Update user (set password, clear temp_password)
-  5. Return new JWT with needs_onboarding: false
+  5. Update employer_employees junction status to 'active'
+  6. Return new JWT with needs_onboarding: false
 - **Output**: `{ message: "Onboarding complete", token: string }`
 
 ### Frontend Integration
@@ -140,6 +149,36 @@ CREATE TABLE users (
   temp_password TEXT,                -- For employee onboarding
   role TEXT NOT NULL DEFAULT 'employee',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE employer_employees (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  employer_id INTEGER NOT NULL,
+  employee_id INTEGER NOT NULL,
+  department TEXT,
+  role_title TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',  -- 'pending', 'active', 'deactivated'
+  start_date DATE,
+  end_date DATE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (employer_id) REFERENCES users(id),
+  FOREIGN KEY (employee_id) REFERENCES users(id),
+  UNIQUE(employer_id, employee_id)
+);
+
+CREATE TABLE employee_metrics (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  employee_id INTEGER NOT NULL,
+  metric_date DATE NOT NULL,
+  work_time_seconds INTEGER DEFAULT 0,
+  manual_time_seconds INTEGER DEFAULT 0,
+  computer_activity_seconds INTEGER DEFAULT 0,
+  productive_time_seconds INTEGER DEFAULT 0,
+  unproductive_time_seconds INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (employee_id) REFERENCES users(id)
 );
 ```
 

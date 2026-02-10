@@ -1,7 +1,7 @@
 use crate::auth::{create_jwt, AuthUser};
 use crate::db::DbPool;
 use crate::models::{User, CompleteOnboardingRequest};
-use crate::schema::users;
+use crate::schema::{users, employer_employees};
 use argon2::{
     password_hash::{
         rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString,
@@ -113,6 +113,21 @@ pub async fn complete_onboarding(
                     Json(json!({ "error": e.to_string() })),
                 )
             })?;
+
+        // Update all employer-employee relationships to 'active'
+        diesel::update(
+            employer_employees::table
+                .filter(employer_employees::employee_id.eq(user.id))
+                .filter(employer_employees::status.eq("pending")),
+        )
+        .set(employer_employees::status.eq("active"))
+        .execute(&mut conn)
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({ "error": e.to_string() })),
+            )
+        })?;
 
         // Generate new token
         let token = create_jwt(user.id, &user.email, &user.role, false).map_err(|e| {

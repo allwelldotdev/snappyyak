@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, post},
+    routing::{get, patch, post},
     Router,
 };
 use dotenvy::dotenv;
@@ -29,6 +29,7 @@ async fn main() {
         // Employer routes
         .route("/api/employer/employees", post(routes::employer::add_employee).get(routes::employer::list_employees))
         .route("/api/employer/employees/:id", get(routes::employer::get_employee).delete(routes::employer::delete_employee))
+        .route("/api/employer/employees/:id/status", patch(routes::employer::update_employee_status))
         // Onboarding routes
         .route("/api/onboarding/complete", post(routes::onboarding::complete_onboarding))
         .layer(CorsLayer::permissive())
