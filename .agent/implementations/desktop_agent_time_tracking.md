@@ -524,9 +524,9 @@ Response:
 **Timeline**: 2-3 months
 
 **macOS Development (Weeks 1-6)**:
-- [ ] Tauri project setup with Svelte + TypeScript
-- [ ] Basic activity monitoring (keyboard, mouse) using CGEvent API
-- [ ] Active application tracking (macOS NSWorkspace)
+- [x] Tauri project setup with Svelte + TypeScript
+- [x] Basic activity monitoring (keyboard, mouse) using CGEvent API
+- [x] Active application tracking (macOS NSWorkspace)
 - [ ] Local SQLite storage with memory optimization
 - [ ] API client for backend sync
 - [ ] System tray UI (macOS menu bar)
