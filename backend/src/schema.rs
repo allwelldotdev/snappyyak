@@ -1,9 +1,8 @@
 // @generated automatically by Diesel CLI.
-// Modified: changed Nullable<Integer> to Integer for primary key columns
 
 diesel::table! {
     employee_metrics (id) {
-        id -> Integer,
+        id -> Nullable<Integer>,
         user_id -> Integer,
         date -> Date,
         work_time_minutes -> Nullable<Integer>,
@@ -20,7 +19,7 @@ diesel::table! {
 
 diesel::table! {
     employer_employees (id) {
-        id -> Integer,
+        id -> Nullable<Integer>,
         employer_id -> Integer,
         employee_id -> Integer,
         department -> Nullable<Text>,
@@ -35,7 +34,7 @@ diesel::table! {
 
 diesel::table! {
     users (id) {
-        id -> Integer,
+        id -> Nullable<Integer>,
         email -> Text,
         fullname -> Text,
         password -> Nullable<Text>,
