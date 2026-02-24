@@ -80,7 +80,7 @@ pub async fn add_employee(
         // User exists - check if relationship already exists
         let relationship_exists = employer_employees::table
             .filter(employer_employees::employer_id.eq(auth_user.user_id))
-            .filter(employer_employees::employee_id.eq(existing.id))
+            .filter(employer_employees::employee_id.eq(existing.id.unwrap()))
             .first::<crate::models::EmployerEmployee>(&mut conn)
             .optional()
             .map_err(|e| {
@@ -100,7 +100,7 @@ pub async fn add_employee(
         // Create relationship for existing user
         let new_relationship = NewEmployerEmployee {
             employer_id: auth_user.user_id,
-            employee_id: existing.id,
+            employee_id: existing.id.unwrap(),
             status: "pending".to_string(),
         };
 
@@ -117,7 +117,7 @@ pub async fn add_employee(
         return Ok((
             StatusCode::CREATED,
             Json(json!(AddEmployeeResponse {
-                id: existing.id,
+                id: existing.id.unwrap(),
                 email: existing.email,
                 temp_password: "User already exists - no temp password generated".to_string(),
             })),
@@ -176,7 +176,7 @@ pub async fn add_employee(
     // Create employer-employee relationship
     let new_relationship = NewEmployerEmployee {
         employer_id: auth_user.user_id,
-        employee_id: user.id,
+        employee_id: user.id.unwrap(),
         status: "pending".to_string(),
     };
 
@@ -193,7 +193,7 @@ pub async fn add_employee(
     Ok((
         StatusCode::CREATED,
         Json(json!(AddEmployeeResponse {
-            id: user.id,
+            id: user.id.unwrap(),
             email: user.email,
             temp_password,
         })),
@@ -221,7 +221,7 @@ pub async fn list_employees(
 
     // Build query: join employer_employees with users
     let mut query = employer_employees::table
-        .inner_join(users::table.on(users::id.eq(employer_employees::employee_id)))
+        .inner_join(users::table.on(users::id.eq(employer_employees::employee_id.nullable())))
         .filter(employer_employees::employer_id.eq(auth_user.user_id))
         .into_boxed();
 
@@ -252,20 +252,40 @@ pub async fn list_employees(
             )
         })?;
 
+    let today = chrono::Local::now().date_naive();
+    let user_ids: Vec<i32> = results.iter().map(|(_, user)| user.id.unwrap()).collect();
+
+    let metrics: Vec<crate::models::EmployeeMetric> = crate::schema::employee_metrics::table
+        .filter(crate::schema::employee_metrics::user_id.eq_any(&user_ids))
+        .filter(crate::schema::employee_metrics::date.eq(today))
+        .load(&mut conn)
+        .unwrap_or_default();
+
+    let format_mins = |mins: Option<i32>| -> String {
+        let m = mins.unwrap_or(0);
+        let hours = m / 60;
+        let rem_mins = m % 60;
+        format!("{:02}:{:02}", hours, rem_mins)
+    };
+
     let employees: Vec<EmployeeWithRelationship> = results
         .into_iter()
-        .map(|(rel, user)| EmployeeWithRelationship {
-            id: user.id,
-            email: user.email,
-            fullname: user.fullname,
-            status: rel.status,
-            onboarded: user.password.is_some(),
-            created_at: user.created_at.to_string(),
-            work_time: "00:00".to_string(),
-            manual_time: "00:00".to_string(),
-            computer_activity: "00:00".to_string(),
-            productive_time: "00:00".to_string(),
-            unproductive_time: "00:00".to_string(),
+        .map(|(rel, user)| {
+            let user_metrics = metrics.iter().find(|m| m.user_id == user.id.unwrap());
+            
+            EmployeeWithRelationship {
+                id: user.id.unwrap(),
+                email: user.email,
+                fullname: user.fullname,
+                status: rel.status,
+                onboarded: user.password.is_some(),
+                created_at: user.created_at.to_string(),
+                work_time: format_mins(user_metrics.and_then(|m| m.work_time_minutes)),
+                manual_time: format_mins(user_metrics.and_then(|m| m.manual_time_minutes)),
+                computer_activity: format_mins(user_metrics.and_then(|m| m.computer_activity_minutes)),
+                productive_time: format_mins(user_metrics.and_then(|m| m.productive_minutes)),
+                unproductive_time: format_mins(user_metrics.and_then(|m| m.unproductive_minutes)),
+            }
         })
         .collect();
 
@@ -361,7 +381,7 @@ pub async fn get_employee(
     })?;
 
     let user = users::table
-        .find(id)
+        .filter(users::id.eq(id))
         .first::<User>(&mut conn)
         .optional()
         .map_err(|e| {
@@ -380,7 +400,7 @@ pub async fn get_employee(
         }
 
         return Ok(Json(json!({
-            "id": user.id,
+            "id": user.id.unwrap(),
             "email": user.email,
             "fullname": user.fullname,
             "onboarded": user.password.is_some(),
@@ -414,7 +434,7 @@ pub async fn delete_employee(
     })?;
 
     let target_user = users::table
-        .find(id)
+        .filter(users::id.eq(id))
         .first::<User>(&mut conn)
         .optional()
         .map_err(|e| {

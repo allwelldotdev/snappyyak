@@ -32,6 +32,8 @@ async fn main() {
         .route("/api/employer/employees/:id/status", patch(routes::employer::update_employee_status))
         // Onboarding routes
         .route("/api/onboarding/complete", post(routes::onboarding::complete_onboarding))
+        // Employee routes
+        .route("/api/employee/metrics/sync", post(routes::employee::sync_metrics))
         .layer(CorsLayer::permissive())
         .with_state(pool);
 

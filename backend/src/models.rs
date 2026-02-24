@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct User {
-    pub id: i32,
+    pub id: Option<i32>,
     pub email: String,
     pub fullname: String,
     #[serde(skip)]
@@ -75,7 +75,7 @@ pub struct CompleteOnboardingRequest {
 #[diesel(table_name = crate::schema::employer_employees)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct EmployerEmployee {
-    pub id: i32,
+    pub id: Option<i32>,
     pub employer_id: i32,
     pub employee_id: i32,
     pub department: Option<String>,
@@ -114,4 +114,46 @@ pub struct EmployeeWithRelationship {
 #[derive(Deserialize)]
 pub struct StatusUpdateRequest {
     pub status: String,
+}
+
+#[derive(Deserialize)]
+pub struct SyncMetricsRequest {
+    pub date: chrono::NaiveDate,
+    pub work_time_minutes: Option<i32>,
+    pub computer_activity_minutes: Option<i32>,
+    pub productive_minutes: Option<i32>,
+    pub unproductive_minutes: Option<i32>,
+    pub neutral_minutes: Option<i32>,
+}
+
+#[derive(Insertable, AsChangeset)]
+#[diesel(table_name = crate::schema::employee_metrics)]
+pub struct NewEmployeeMetric {
+    pub user_id: i32,
+    pub date: chrono::NaiveDate,
+    pub work_time_minutes: Option<i32>,
+    pub computer_activity_minutes: Option<i32>,
+    pub productive_minutes: Option<i32>,
+    pub unproductive_minutes: Option<i32>,
+    pub neutral_minutes: Option<i32>,
+    pub manual_time_minutes: Option<i32>,
+    pub break_time_minutes: Option<i32>,
+}
+
+#[derive(Debug, Queryable, Selectable, Serialize)]
+#[diesel(table_name = crate::schema::employee_metrics)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct EmployeeMetric {
+    pub id: Option<i32>,
+    pub user_id: i32,
+    pub date: chrono::NaiveDate,
+    pub work_time_minutes: Option<i32>,
+    pub manual_time_minutes: Option<i32>,
+    pub computer_activity_minutes: Option<i32>,
+    pub productive_minutes: Option<i32>,
+    pub unproductive_minutes: Option<i32>,
+    pub neutral_minutes: Option<i32>,
+    pub break_time_minutes: Option<i32>,
+    pub created_at: chrono::NaiveDateTime,
+    pub updated_at: chrono::NaiveDateTime,
 }

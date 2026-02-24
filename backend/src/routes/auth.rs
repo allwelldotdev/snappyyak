@@ -110,7 +110,7 @@ pub async fn signup(
         })?;
 
     // New employers don't need onboarding
-    let token = create_jwt(user.id, &user.email, &user.role, false).map_err(|e| {
+    let token = create_jwt(user.id.unwrap(), &user.email, &user.role, false).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({ "error": e.to_string() })),
@@ -176,7 +176,7 @@ pub async fn login(
 
     if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
         if let (Some(id), Some(email), Some(fullname), Some(role)) = (user_id, user_email, user_fullname, user_role) {
-            let token = create_jwt(id, email, role, needs_onb).map_err(|e| {
+            let token = create_jwt(id.unwrap(), email, role, needs_onb).map_err(|e| {
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     Json(json!({ "error": e.to_string() })),
@@ -206,7 +206,7 @@ pub async fn me(
     })?;
 
     let user = users::table
-        .find(auth_user.user_id)
+        .filter(users::id.eq(auth_user.user_id))
         .first::<User>(&mut conn)
         .optional()
         .map_err(|e| {
@@ -247,7 +247,7 @@ pub async fn update_profile(
         )
     })?;
 
-    diesel::update(users::table.find(auth_user.user_id))
+    diesel::update(users::table.filter(users::id.eq(auth_user.user_id)))
         .set(users::fullname.eq(payload.fullname.trim()))
         .execute(&mut conn)
         .map_err(|e| {
@@ -273,7 +273,7 @@ pub async fn change_password(
     })?;
 
     let user = users::table
-        .find(auth_user.user_id)
+        .filter(users::id.eq(auth_user.user_id))
         .first::<User>(&mut conn)
         .optional()
         .map_err(|e| {
@@ -318,7 +318,7 @@ pub async fn change_password(
             .to_string();
 
         // Update password
-        diesel::update(users::table.find(auth_user.user_id))
+        diesel::update(users::table.filter(users::id.eq(auth_user.user_id)))
             .set(users::password.eq(Some(new_password_hash))) // Wrap in Some
             .execute(&mut conn)
             .map_err(|e| {

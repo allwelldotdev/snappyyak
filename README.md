@@ -1,6 +1,6 @@
-# SnappyYak Web - Homepage & Auth Implementation
+# SnappyYak - Workforce Productivity Platform
 
-This project is a high-performance web application, now migrated to a **Next.js** frontend and a **Rust (Axum)** backend, featuring **SQLite/Diesel** for robust local authentication.
+A privacy-first workforce productivity platform. The system is composed of a **Rust (Axum)** backend, a **Next.js** employer/employee web dashboard, and a **Tauri + Svelte** desktop agent for macOS that tracks activity and syncs data in real time.
 
 ## 🚀 Getting Started
 
@@ -47,32 +47,53 @@ This project is a high-performance web application, now migrated to a **Next.js*
 
 ---
 
-## 🔐 Auth Backend Functionality
+#### 3. Desktop Agent (macOS)
+1. **Open a new terminal** and navigate to the desktop agent directory:
+   ```bash
+   cd desktop-agent
+   ```
+2. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Tauri development app:
+   ```bash
+   RUST_LOG=info npm run tauri dev
+   ```
+   The desktop agent window will open. Log in with an **Employee** account. Metrics sync to the backend every 60 seconds.
 
-The project includes a robust local authentication system, now powered by Rust for performance and safety.
+> **Note**: The backend must be running on port 8080 before launching the desktop agent.
+
+---
+
+## 🔐 Auth & API
 
 ### Features
 - **JWT-based Auth**: Secure session management using JSON Web Tokens.
-- **SQLite Database**: Local data persistence using `diesel`.
-- **Axum Framework**: High-performance, async backend handling.
-- **Protected Routes**: Dashboard access is restricted to logged-in users via Next.js middleware/hooks.
+- **Role-Based Access**: Employers and Employees have separate dashboards and API permissions.
+- **SQLite Database**: Local persistence using Diesel ORM.
+- **Desktop Agent Sync**: Employee metrics collected locally and synced via batched REST POST.
 
 ### API Endpoints (Backend Port 8080)
 
 **Authentication:**
 - `POST /api/auth/signup`: Create a new employer account.
-- `POST /api/auth/login`: Authenticate and receive a JWT (supports password or temp_password).
-- `GET /api/auth/me`: Validate the current session using the stored token.
-- `POST /api/auth/change-password`: Update user password (requires valid JWT).
+- `POST /api/auth/login`: Authenticate and receive a JWT.
+- `GET /api/auth/me`: Validate the current session.
+- `POST /api/auth/change-password`: Update user password.
 
 **Employer Management:**
-- `POST /api/employer/employees`: Add a new employee (auto-generates temporary password).
-- `GET /api/employer/employees`: List all employees.
+- `POST /api/employer/employees`: Add a new employee (generates temporary password).
+- `GET /api/employer/employees`: List all employees with today's synced metrics.
 - `GET /api/employer/employees/:id`: Get employee details.
-- `DELETE /api/employer/employees/:id`: Remove employee.
+- `PATCH /api/employer/employees/:id/status`: Update employee status.
+- `DELETE /api/employer/employees/:id`: Remove employee relationship.
 
 **Employee Onboarding:**
 - `POST /api/onboarding/complete`: Complete onboarding by setting a new password.
+
+**Desktop Agent Sync (Employee-only):**
+- `POST /api/employee/metrics/sync`: Upsert today's aggregated activity metrics.
 
 ---
 
@@ -99,21 +120,26 @@ The project includes a robust local authentication system, now powered by Rust f
 
 ## 🛠️ Project Structure
 
-- **`backend/`**: Rust application (Axum, Diesel, Tokio).
-  - `src/main.rs`: Server entry point.
-  - `src/auth.rs`: JWT logic.
-  - `src/routes.rs`: API handlers.
-  - `src/models.rs`: Database models.
-- **`frontend/`**: Next.js application (App Router).
-  - `app/`: Pages (Home, Auth, Dashboard).
-  - `components/`: UI components (restored from original design).
-  - `contexts/`: Auth provider compatibility.
+- **`backend/`**: Rust/Axum API server.
+  - `src/routes/`: `auth`, `employer`, `employee`, `onboarding` handlers.
+  - `src/models.rs`: Diesel ORM models including `EmployeeMetric`.
+  - `migrations/`: Diesel SQL migrations.
+- **`frontend/`**: Next.js 16 App Router web dashboard.
+  - `app/employer/`: Employer dashboard (employees, analytics, schedules).
+  - `app/dashboard/`: Employee dashboard.
+  - `components/`: Shared UI (shadcn/radix-based).
+- **`desktop-agent/`**: Tauri 2.x + Svelte macOS desktop app.
+  - `src-tauri/src/lib.rs`: App state, Tauri commands, background sync loop.
+  - `src-tauri/src/storage.rs`: Local SQLite cache (rusqlite).
+  - `src-tauri/src/api_client.rs`: HTTP client for backend sync.
+  - `src-tauri/src/monitors/`: Native macOS activity monitoring (CGEvent, NSWorkspace).
+  - `src/routes/`: Svelte pages (login, metrics dashboard).
 - **`legacy_vite_app/`**: The previous Hono/Vite implementation (archived).
 
 ---
 
 ## 📝 Iterative Documentation
-For more detailed technical documentation, refer to the `.agent` directory within `homepage_build`:
+For more detailed technical documentation, refer to the `.agent` directory:
 - [Architecture Overview](.agent/architecture.md)
 - [Current Status](.agent/current_status.md)
 - [Development Guide](.agent/development_guide.md)

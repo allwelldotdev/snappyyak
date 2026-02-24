@@ -12,7 +12,7 @@ This SOP defines the **mandatory** design system for SnappyYak's Next.js fronten
 #### 1. Satoshi (Primary Body & UI Font)
 - **Source**: Fontshare CDN
 - **Location**: MUST be loaded in `frontend/app/layout.tsx`
-- **CDN Link**: `https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap`
+- **CDN Link**: `https://fonts.cdnfonts.com/css/satoshi`
 - **Usage**: 
   - Body text across entire application
   - UI elements (buttons, inputs, labels)
@@ -50,7 +50,7 @@ fontFamily: {
 ```tsx
 <html lang="en">
   <head>
-    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet" />
   </head>
   <body>
     {/* NO className on body - let globals.css handle it */}
@@ -62,7 +62,7 @@ fontFamily: {
 
 ```css
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@700&family=Inter:wght@400;500;600&display=swap');
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/satoshi');
 
 @layer base {
   body {

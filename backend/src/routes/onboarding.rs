@@ -41,7 +41,7 @@ pub async fn complete_onboarding(
     })?;
 
     let user = users::table
-        .find(auth_user.user_id)
+        .filter(users::id.eq(auth_user.user_id))
         .first::<User>(&mut conn)
         .optional()
         .map_err(|e| {
@@ -101,7 +101,7 @@ pub async fn complete_onboarding(
             .to_string();
 
         // Update user: set password, clear temp_password
-        diesel::update(users::table.find(user.id))
+        diesel::update(users::table.filter(users::id.eq(user.id)))
             .set((
                 users::password.eq(Some(new_password_hash)),
                 users::temp_password.eq(None::<String>),
@@ -117,7 +117,7 @@ pub async fn complete_onboarding(
         // Update all employer-employee relationships to 'active'
         diesel::update(
             employer_employees::table
-                .filter(employer_employees::employee_id.eq(user.id))
+                .filter(employer_employees::employee_id.eq(user.id.unwrap()))
                 .filter(employer_employees::status.eq("pending")),
         )
         .set(employer_employees::status.eq("active"))
@@ -130,7 +130,7 @@ pub async fn complete_onboarding(
         })?;
 
         // Generate new token
-        let token = create_jwt(user.id, &user.email, &user.role, false).map_err(|e| {
+        let token = create_jwt(user.id.unwrap(), &user.email, &user.role, false).map_err(|e| {
              (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({ "error": e.to_string() })),

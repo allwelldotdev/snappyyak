@@ -1,76 +1,55 @@
 # Architecture & File Structure
 
 ## Directory Structure
-The project is split into two distinct applications:
+The project has three components: the Rust/Axum backend, the Next.js web dashboard, and the Tauri/Svelte desktop agent.
 
 ```
 SnappyYak-Core/
-├── backend/             # Rust Application (Axum + Diesel)
+├── backend/             # Rust Application (Axum + Diesel + SQLite)
 │   ├── src/
 │   │   ├── main.rs      # Server entry point
 │   │   ├── auth.rs      # JWT & Auth middleware
 │   │   ├── db.rs        # Database connection pool
-│   │   ├── models.rs    # Diesel structs
-│   │   ├── routes/      # Modular route handlers
-│   │   │   ├── mod.rs      # Route module exports
-│   │   │   ├── auth.rs     # Auth endpoints (signup, login, me)
-│   │   │   ├── employer.rs # Employer endpoints (employee mgmt)
+│   │   ├── models.rs    # Diesel structs (User, EmployerEmployee, EmployeeMetric, ...)
+│   │   ├── routes/
+│   │   │   ├── auth.rs       # Auth endpoints
+│   │   │   ├── employer.rs   # Employer endpoints (employee mgmt + metrics aggregation)
+│   │   │   ├── employee.rs   # Employee endpoints (metrics sync)
 │   │   │   └── onboarding.rs # Onboarding endpoints
 │   │   └── schema.rs    # Auto-generated Diesel schema
 │   ├── migrations/      # SQL migrations
-│   ├── Cargo.toml       # Rust dependencies
-│   └── .env             # Backend secrets
-├── frontend/            # Next.js Application (React)
-│   ├── app/             # App Router pages
-│   │   ├── auth/        # Login/Signup page
-│   │   │   └── forgot-password/ # Password reset placeholder
-│   │   ├── dashboard/   # Protected Dashboard (Employee view)
-│   │   │   ├── layout.tsx     # Shared sidebar & navigation
-│   │   │   ├── page.tsx       # Overview/Home dashboard (Employees table)
-│   │   │   ├── employees/[id]/   # Employee details (nested layout)
-│   │   │   │   ├── layout.tsx    # Shared header (breadcrumbs, tabs)
-│   │   │   │   ├── page.tsx      # Timesheets view
-│   │   │   │   ├── schedules/    # Schedules calendar
-│   │   │   │   │   └── page.tsx  # Calendar grid with shifts/time-off
-│   │   │   │   └── projects/     # Projects dashboard
-│   │   │   │       └── page.tsx  # Stats cards and bar chart
-│   │   │   ├── time/          # Time and Attendance section
-│   │   │   │   ├── layout.tsx    # Shared header (title, tabs, view toggle)
-│   │   │   │   ├── page.tsx      # Timesheets data table
-│   │   │   │   ├── manual/       # Manual time entry
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── schedules/    # Team schedules
-│   │   │   │       └── page.tsx
-│   │   │   ├── projects/      # Projects dashboard
-│   │   │   │   ├── layout.tsx    # Shared header (tabs)
-│   │   │   │   ├── page.tsx      # Insightful view
-│   │   │   │   └── integrated/   # Integrated view
-│   │   │   │       └── page.tsx
-│   │   │   ├── download/      # Download page
-│   │   │   │   └── page.tsx   # OS-specific installation files
-│   │   ├── settings/      # Personal settings (shared between roles)
-│   │   │   ├── layout.tsx    # Role-based layout wrapper (Employer/Employee)
-│   │   │   ├── page.tsx      # Redirects to info
-│   │   │   ├── info/         # Password, social, 2FA
-│   │   │   │   └── page.tsx
-│   │   │   └── localization/ # Time zones, language
-│   │   │       └── page.tsx
-│   │   ├── employer/    # Employer Dashboard (Protected)
-│   │   │   ├── layout.tsx     # Employer portal layout
-│   │   │   └── page.tsx       # Employer dashboard home
-│   │   ├── onboarding/  # Employee Onboarding (Protected)
-│   │   │   ├── layout.tsx     # Onboarding layout
-│   │   │   └── page.tsx       # Password setup form
-│   │   ├── globals.css  # Global styles
-│   │   └── layout.tsx   # Root layout with AuthProvider
-│   ├── components/      # UI Components
-│   │   ├── dashboard/   # Dashboard-specific (UserMenu, DateRangePicker, EmptyState)
-│   │   ├── layout/      # Layout components (Navbar)
-│   │   ├── providers/   # Context providers (AuthProvider, useRequireAuth)
-│   │   └── ui/          # Reusable UI (Logo, Calendar, Select, Button, Popover)
-│   ├── public/          # Static assets
-│   ├── tailwind.config.ts # Tailwind config
-│   └── package.json     # Frontend dependencies
+│   ├── Cargo.toml
+│   └── .env
+├── frontend/            # Next.js 16 App Router (React 19, Tailwind, Shadcn)
+│   ├── app/
+│   │   ├── auth/
+│   │   ├── dashboard/   # Employee-facing pages
+│   │   ├── employer/    # Employer-facing pages (employees, alerts, etc.)
+│   │   ├── onboarding/
+│   │   └── settings/
+│   ├── components/
+│   │   ├── dashboard/
+│   │   ├── employer/
+│   │   ├── providers/   # AuthProvider, useRequireAuth
+│   │   └── ui/
+│   └── package.json
+├── desktop-agent/       # Tauri 2.x + Svelte macOS Desktop App
+│   ├── src/             # Svelte frontend (SPA mode)
+│   │   └── routes/
+│   │       ├── +layout.svelte   # Auth guard
+│   │       ├── +layout.ts       # SSR disabled
+│   │       ├── +page.svelte     # Metrics dashboard
+│   │       └── auth/
+│   │           └── +page.svelte # Employee login form
+│   ├── src-tauri/       # Rust/Tauri backend
+│   │   └── src/
+│   │       ├── lib.rs           # AppState, Tauri commands, background sync loop
+│   │       ├── storage.rs       # Local SQLite (rusqlite)
+│   │       ├── api_client.rs    # reqwest HTTP client
+│   │       └── monitors/
+│   │           ├── activity.rs  # CGEvent keyboard/mouse counting
+│   │           └── app_usage.rs # NSWorkspace app tracking
+│   └── package.json
 └── legacy_vite_app/     # Archived Hono/Vite codebase
 ```
 
@@ -159,7 +138,11 @@ The backend is a standalone **Rust** application using the **Axum** framework.
     - `DELETE /api/employer/employees/:id`: Remove employee relationship.
   - **Onboarding** (`routes/onboarding.rs`):
     - `POST /api/onboarding/complete`: Complete employee onboarding (verify temp password, set new password, update junction status to 'active').
+  - **Employee Sync** (`routes/employee.rs`):
+    - `POST /api/employee/metrics/sync`: Upsert today's aggregated metrics for the authenticated employee. Requires `role: employee` JWT. Performs `INSERT OR REPLACE` on `employee_metrics`.
 
 ## Integration
-- The Frontend communicates with the Backend via standard HTTP requests to `http://localhost:8080`.
+- The Frontend and Desktop Agent communicate with the Backend via HTTP to `http://localhost:8080`.
 - CORS is configured on the Backend to allow requests from the Frontend (`http://localhost:3000`).
+- The Desktop Agent syncs metrics every 60 seconds via a background Tokio task. Offline data is buffered in local SQLite and retried on the next tick.
+- The Employer Dashboard (`GET /api/employer/employees`) joins `employee_metrics` for today's date and formats per-employee minutes as `HH:MM` strings for display.

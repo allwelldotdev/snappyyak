@@ -2,7 +2,7 @@
 
 **Project**: SnappyYak Core Application  
 **Type**: Full-stack application with separate backend and frontend  
-**Last Updated**: 2026-02-03 (Settings Layout refactoring, Downloads page, Time and Attendance section)
+**Last Updated**: 2026-02-24 (Migration fixes, Schema alignment, Employer dashboard link updates)
 
 ## Tech Stack
 

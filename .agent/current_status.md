@@ -12,16 +12,27 @@
   - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
 
 ## Recently Completed
-- **Alerts Page Implementation**:
-  - Created `/employer/alerts` route with nested layout pattern.
-  - Implemented tabbed navigation (Overview, Logs) with active state highlighting.
-  - Built Alerts Overview page with:
-    - Header with "New Alert" button (brand-orange) and notification bell with badge.
-    - Controls row with date picker, "Compare to" dropdown, "Add Filter" button, and export action.
-    - Empty state component for no data scenario.
-  - Built Alerts Logs page with identical controls row and dedicated empty state.
-  - All styling follows employer dashboard design patterns with indigo color scheme for controls.
-  - Verified implementation in browser against design requirements.
+
+- **Desktop Agent — Phase 1 Complete (macOS)**:
+  - **Authentication**: Employee-only login via Tauri `login` command. JWT stored in local SQLite `settings` table and reloaded across restarts. Employer logins are rejected with an error. Route guard in `+layout.svelte` redirects unauthenticated users to `/auth`.
+  - **Activity Monitoring**: Keyboard and mouse events counted using macOS CGEvent API (`monitors/activity.rs`). Active application tracked via NSWorkspace (`monitors/app_usage.rs`).
+  - **Local SQLite Storage** (`storage.rs`): `metrics_cache` table stores per-day aggregated metrics. `settings` table stores the JWT across restarts. Implemented with `rusqlite` (bundled).
+  - **API Client** (`api_client.rs`): `reqwest` + `rustls-tls` (no OpenSSL) for minimal binary size. Handles login and `sync_metrics` POST requests with `Authorization` header.
+  - **Background Batched Sync Loop**: Tokio task spawned on startup. Ticks every 60 seconds, drains atomic activity counters, increments SQLite cache, and POSTs a summary to `POST /api/employee/metrics/sync`. Fails gracefully offline (data stays in SQLite).
+  - **Logging**: `env_logger` initialized; `log::info!` on activity detection and sync success; `log::error!` on sync failure. Run with `RUST_LOG=info`.
+  - **Backend Sync Endpoint**: `POST /api/employee/metrics/sync` in `routes/employee.rs` (employee JWT required). Performs upsert on `employee_metrics` keyed by `(user_id, date)`.
+  - **Employer Dashboard Metrics**: Updated `list_employees` in `routes/employer.rs` to join `employee_metrics` for today's date, format minutes as `HH:MM` strings, and include them in the `GET /api/employer/employees` response.
+  - **End-to-End Verified**: Browser test confirmed `00:23` work/computer-activity minutes displayed for John Doe on the Employer Dashboard after desktop agent sync. Memory footprint measured at ~40.9MB on macOS.
+- **Migration & Schema Alignment**:
+  - Fixed broken migrations for `employer_employees` and `employee_metrics` by adding missing SQL definitions.
+  - Synchronized `backend/src/schema.rs` with SQLite's primary key handling by marking them as `Nullable<Integer>`.
+  - Verified database reset and migration flow with `diesel database reset`.
+- **Employer Dashboard Improvements**:
+  - Corrected navigation links in `AddEmployeePage` to point to `/employer/employees` instead of `/employer`.
+  - Replaced legacy "Insightful" branding with "SnappyYak" in the `AddEmployeeModal` description.
+- **Global Design Updates**:
+  - Updated Satoshi font import URLs in `globals.css` and `layout.tsx` to use `fonts.cdnfonts.com`.
+  - Ensured consistent font loading across all dashboard pages.
 
 - **Unified Settings Route Refactoring**:
   - Moved Personal Settings from `/dashboard/settings` to `/settings` for role-agnostic access.
@@ -205,12 +216,18 @@
   - Tighter CORS configuration for production.
   - Implement actual OAuth logic (currently placeholders).
   - Implement actual email sending for password reset.
+- **Desktop Agent — Next Steps**:
+  - Windows port (SetWindowsHookEx activity monitoring, WebView2 config).
+  - Application categorization engine (productive / unproductive / neutral).
+  - Idle time detection and deliberate break tracking.
+  - Screenshot capture and upload pipeline.
+  - System tray / menu bar UI.
+  - Increase sync interval to 5–10 min for production battery efficiency.
 - **Features**:
   - Email verification (placeholder exists).
-  - Real productivity data ingestion (currently mocked).
 - **Infrastructure & UI**:
-    - Dockerize applications for easier deployment.
-    - Set up CI/CD pipelines.
+  - Dockerize applications for easier deployment.
+  - Set up CI/CD pipelines.
 
 ## Recently Completed (Security Audit)
 - **Timing Attack Fix**: Refactored login endpoint to use constant-time password verification, preventing user enumeration.
