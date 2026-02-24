@@ -58,7 +58,7 @@ export default function AddEmployeePage() {
 
     const handleModalClose = () => {
         setShowTempPassword(false);
-        router.push('/employer');
+        router.push('/employer/employees');
     };
 
     return (
@@ -66,7 +66,7 @@ export default function AddEmployeePage() {
             {/* Header with Back Button */}
             <div className="flex items-center gap-4 mb-6">
                 <Link
-                    href="/employer"
+                    href="/employer/employees"
                     className="p-2 text-gray-500 hover:text-brand-dark hover:bg-gray-100 rounded-lg transition-colors"
                 >
                     <ArrowLeft className="w-5 h-5" />
@@ -133,7 +133,7 @@ export default function AddEmployeePage() {
                     {/* Submit Button */}
                     <div className="flex gap-3 pt-2">
                         <Link
-                            href="/employer"
+                            href="/employer/employees"
                             className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors text-center"
                         >
                             Cancel

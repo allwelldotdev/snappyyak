@@ -113,7 +113,7 @@ export function AddEmployeeModal({ isOpen, onClose }: AddEmployeeModalProps) {
 
                                 {/* Description */}
                                 <p className="text-sm text-gray-500 text-center mb-4">
-                                    Employees work on their personal computers and should have the ability to control when Insightful tracks their activities.
+                                    Employees work on their personal computers and should have the ability to control when SnappyYak tracks their activities.
                                 </p>
 
                                 {/* Label */}
