@@ -149,10 +149,10 @@ Verified complete auth flow:
 
 ### Documentation
 - ✅ `README.md` - Updated setup instructions
-- ✅ `.agent/AGENTS.md` - Rust/Next.js rules
-- ✅ `.agent/architecture.md` - New structure
-- ✅ `.agent/current_status.md` - Migration status
-- ✅ `.agent/development_guide.md` - Updated commands
+- ✅ `AGENTS.md` - Rust/Next.js rules
+- ✅ `.agents/architecture.md` - New structure
+- ✅ `.agents/current_status.md` - Migration status
+- ✅ `.agents/development_guide.md` - Updated commands
 
 ## Dependencies
 

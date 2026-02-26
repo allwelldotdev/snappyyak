@@ -13,6 +13,16 @@
 
 ## Recently Completed
 
+- **Documentation & Skills**:
+  - Moved `AGENTS.md` to repo root and updated references across docs.
+  - Added `docs-update-protocol` skill under `.agents/skills/`.
+  - Added skills index and skill storage guidance in `AGENTS.md`.
+  - Added `backend-endpoint-workflow` and `frontend-page-workflow` skills; updated `AGENTS.md` to reference them.
+  - Renamed `.agent/` to `.agents/` and updated references across docs.
+  - Added `design-system-guardrails`, `diesel-migration-workflow`, `auth-session-rules`, and `standard-test-credentials` skills; updated `AGENTS.md` to reference them.
+  - Trimmed `AGENTS.md` to focus on skills and link to `.agents` docs for detailed guidance.
+  - Updated `.agents/README.md` use cases to reference skills; aligned `GEMINI.md` desktop agent status.
+  - Updated `README.md`, `GEMINI.md`, `.agents/project_overview.md`, and `.agents/development_guide.md` for skills-first documentation links.
 - **Desktop Agent — Phase 1 Complete (macOS)**:
   - **Authentication**: Employee-only login via Tauri `login` command. JWT stored in local SQLite `settings` table and reloaded across restarts. Employer logins are rejected with an error. Route guard in `+layout.svelte` redirects unauthenticated users to `/auth`.
   - **Activity Monitoring**: Keyboard and mouse events counted using macOS CGEvent API (`monitors/activity.rs`). Active application tracked via NSWorkspace (`monitors/app_usage.rs`).
@@ -133,7 +143,8 @@
   - Fixed Schedules page calendar grid gap by making scrollable wrapper a flex container.
   - Ensured both Projects and Schedules pages properly fill their containers.
 - **Documentation**:
-  - Added standard test credentials to `AGENTS.md` for future agentic workflows.
+  - Standard test credentials are documented in `.agents/skills/standard-test-credentials/SKILL.md`.
+  - Updated employer test credentials to use `dev@example.com` / `password123` as primary.
 - **Projects Dashboard**:
   - Implemented `/dashboard/projects` with tabbed navigation ("Insightful" and "Integrated").
   - **Insightful View**:

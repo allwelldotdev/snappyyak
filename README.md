@@ -118,28 +118,8 @@ A privacy-first workforce productivity platform. The system is composed of a **R
 
 ---
 
-## 🛠️ Project Structure
-
-- **`backend/`**: Rust/Axum API server.
-  - `src/routes/`: `auth`, `employer`, `employee`, `onboarding` handlers.
-  - `src/models.rs`: Diesel ORM models including `EmployeeMetric`.
-  - `migrations/`: Diesel SQL migrations.
-- **`frontend/`**: Next.js 16 App Router web dashboard.
-  - `app/employer/`: Employer dashboard (employees, analytics, schedules).
-  - `app/dashboard/`: Employee dashboard.
-  - `components/`: Shared UI (shadcn/radix-based).
-- **`desktop-agent/`**: Tauri 2.x + Svelte macOS desktop app.
-  - `src-tauri/src/lib.rs`: App state, Tauri commands, background sync loop.
-  - `src-tauri/src/storage.rs`: Local SQLite cache (rusqlite).
-  - `src-tauri/src/api_client.rs`: HTTP client for backend sync.
-  - `src-tauri/src/monitors/`: Native macOS activity monitoring (CGEvent, NSWorkspace).
-  - `src/routes/`: Svelte pages (login, metrics dashboard).
-- **`legacy_vite_app/`**: The previous Hono/Vite implementation (archived).
-
----
-
 ## 📝 Iterative Documentation
-For more detailed technical documentation, refer to the `.agent` directory:
-- [Architecture Overview](.agent/architecture.md)
-- [Current Status](.agent/current_status.md)
-- [Development Guide](.agent/development_guide.md)
+For more detailed technical documentation, refer to the `.agents` directory:
+- [Architecture Overview](.agents/architecture.md)
+- [Current Status](.agents/current_status.md)
+- [Development Guide](.agents/development_guide.md)

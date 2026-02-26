@@ -53,6 +53,14 @@ npm run dev
 ```
 Runs on `http://localhost:3000`.
 
+### Desktop Agent (macOS)
+Start the Tauri dev app:
+```bash
+# inside desktop-agent/
+RUST_LOG=info npm run tauri dev
+```
+The backend must be running before the desktop agent starts syncing.
+
 ## Database Commands
 
 ### Diesel CLI
@@ -69,6 +77,8 @@ curl -X POST http://localhost:8080/api/auth/signup \
   -H "Content-Type: application/json" \
   -d '{"email":"dev@example.com", "password":"password123"}'
 ```
+
+Use the standard test credentials documented in `.agents/skills/standard-test-credentials/SKILL.md`.
 
 ## Project Structure Notes
 - **Frontend Components**: Located in `frontend/components/`.

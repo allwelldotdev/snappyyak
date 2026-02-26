@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design System Guardrails"
+  short_description: "Enforce brand design rules"
+  default_prompt: "Use -system-guardrails to apply SnappyYak design system rules."

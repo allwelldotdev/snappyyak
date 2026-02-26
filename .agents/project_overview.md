@@ -1,7 +1,7 @@
 # Project Overview: SnappyYak Core Application
 
 ## Introduction
-This project is the core application for SnappyYak, a privacy-first workforce productivity intelligence platform. It has been migrated from a Hono/Vite monolithic stack to a modern, performant architecture using Rust for the backend and Next.js for the frontend.
+This project is the core application for SnappyYak, a privacy-first workforce productivity intelligence platform. It has been migrated from a Hono/Vite monolithic stack to a modern, performant architecture using Rust for the backend, Next.js for the frontend, and a Tauri + Svelte desktop agent.
 
 ## Tech Stack
 
@@ -20,6 +20,11 @@ This project is the core application for SnappyYak, a privacy-first workforce pr
 - **State Management**: React Context (AuthProvider)
 - **Icons**: lucide-react
 - **Utilities**: clsx, tailwind-merge
+
+### Desktop Agent (Tauri)
+- **Framework**: Tauri 2.x + Svelte
+- **Language**: Rust + TypeScript
+- **Sync**: Employee metrics batched to backend
 
 ## Architecture
 
@@ -49,6 +54,7 @@ The frontend is a Next.js application using the App Router pattern, running on p
   - **Colors**: Brand orange (#EA580C), dark (#132326)
   - **Typography**: Instrument Sans (headings), Satoshi (body & UI)
 - **Authentication**: Full JWT-based signup/login flow with protected routes.
+- **Desktop Agent Sync**: Employee metrics collected locally and synced to the backend.
 - **Auth Enhancements**: 
     - Placeholder 'Forgot Password' flow with email input and success states.
     - Integrated Google and Slack OAuth placeholder buttons with branding icons.

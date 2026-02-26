@@ -831,10 +831,10 @@ graph TD
 - [ ] Test edge cases (duplicate email, invalid temp password, etc.)
 
 ### Phase 7: Documentation
-- [ ] Update `.agent/architecture.md`: Add new routing structure
-- [ ] Update `.agent/current_status.md`: Move from "Pending" to "Implemented"
-- [ ] Update `.agent/AGENTS.md`: Add role-based auth rules
-- [ ] Update `.agent/SOP/backend_authentication_guide.md`: Document new endpoints
+- [ ] Update `.agents/architecture.md`: Add new routing structure
+- [ ] Update `.agents/current_status.md`: Move from "Pending" to "Implemented"
+- [ ] Update `AGENTS.md`: Add role-based auth rules
+- [ ] Update `.agents/SOP/backend_authentication_guide.md`: Document new endpoints
 - [ ] Update `README.md`: Add role-based setup instructions
 
 ---
@@ -907,4 +907,4 @@ graph TD
 - This document reflects the planned implementation as of 2026-02-05
 - All code examples are illustrative and may require adjustments during implementation
 - Security considerations should be reviewed before production deployment
-- Refer to `.agent/AGENTS.md` for coding standards and conventions
+- Refer to `AGENTS.md` for coding standards and conventions

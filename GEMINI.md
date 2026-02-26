@@ -11,19 +11,19 @@ SnappyYak is a privacy-first workforce productivity platform. It uses a high-per
 ## 🛠 Technology Stack
 - **Backend**: Rust (v1.93.0+), Axum 0.8, Diesel ORM 2.2, SQLite, Argon2id hashing, JWT sessions.
 - **Frontend**: Next.js 16 (App Router), React 19, TypeScript 5, Tailwind CSS v3, Shadcn UI (Radix-based).
-- **Desktop Agent (Planned)**: Tauri 2.x + Svelte + Rust (Target: <50MB RAM).
+- **Desktop Agent**: Tauri 2.x + Svelte + Rust (Target: <50MB RAM).
 
 ## 🏗 Directory Structure
 - `backend/`: Axum server, Diesel migrations, and models.
 - `frontend/`: Next.js App Router, Shadcn UI components, and AuthProvider.
-- `.agent/`: **Primary Documentation Source**. Includes SOPs, architecture maps, and implementation history.
+- `.agents/`: **Primary Documentation Source**. Includes SOPs, architecture maps, and implementation history.
 - `legacy_vite_app/`: Archived Hono/Vite codebase (Reference Only).
 
 ## 🚨 Critical Rules & Mandates
 
 ### 1. Documentation First
-**MANDATORY**: Update relevant documentation in `.agent/` after every significant change (new features, API updates, schema changes).
-- Always update `current_status.md` and `AGENTS.md` (if rules change).
+**MANDATORY**: Update relevant documentation after every significant change (new features, API updates, schema changes).
+- Always update `.agents/current_status.md` and `AGENTS.md` (if rules change).
 
 ### 2. Backend Standards
 - **Errors**: All API errors MUST return JSON format: `Json(json!({ "error": "message" }))`.
@@ -39,7 +39,7 @@ SnappyYak is a privacy-first workforce productivity platform. It uses a high-per
 
 ### 4. Testing & Credentials
 **MANDATORY**: Use these exact credentials for all testing. DO NOT create random users.
-- **Employer**: `employer@company.com` / `password123`
+- **Employer**: `dev@example.com` / `password123`
 - **Employee**: `john.doe@company.com` / `password123`
 
 ## 🏃 Building and Running
@@ -60,11 +60,11 @@ npm run dev
 ```
 
 ## 📄 Key Reference Files
-- `.agent/AGENTS.md`: Detailed coding rules and test credentials.
-- `.agent/SOP/frontend_design_system.md`: Mandatory styling and font rules.
-- `.agent/SOP/backend_authentication_guide.md`: Auth flow and API specifications.
-- `.agent/current_status.md`: Living record of implemented vs. pending features.
-- `.agent/architecture.md`: Full routing and system map.
+- `AGENTS.md`: Skills index, rule pointers, and test credential guidance.
+- `.agents/SOP/frontend_design_system.md`: Mandatory styling and font rules.
+- `.agents/SOP/backend_authentication_guide.md`: Auth flow and API specifications.
+- `.agents/current_status.md`: Living record of implemented vs. pending features.
+- `.agents/architecture.md`: Full routing and system map.
 
 ---
-**Agent Workflow**: Before coding, review `AGENTS.md` and `current_status.md`. After coding, verify against `SOP/` and update status.
+**Agent Workflow**: Before coding, review `AGENTS.md` and `.agents/current_status.md`. After coding, verify against `.agents/SOP/` and update status.

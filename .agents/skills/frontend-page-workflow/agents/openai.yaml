@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Page Workflow"
+  short_description: "Next.js page creation checklist"
+  default_prompt: "Use -page-workflow to add or update a Next.js App Router page."

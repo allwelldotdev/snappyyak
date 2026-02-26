@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diesel Migration Workflow"
+  short_description: "Checklist for Diesel migrations"
+  default_prompt: "Use -migration-workflow to run database migrations safely."

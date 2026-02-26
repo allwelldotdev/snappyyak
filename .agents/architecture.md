@@ -75,7 +75,7 @@ The application uses **Next.js App Router** for client-side routing.
   - **`/dashboard/download`**: Download Page - OS-specific installation file downloads (Windows, macOS, Linux).
 
 ### Role-Based Authentication Routes
-> **Status**: ✅ **Implemented**. See `.agent/implementations/role_based_auth_system.md` for full specification.
+> **Status**: ✅ **Implemented**. See `.agents/implementations/role_based_auth_system.md` for full specification.
 
 **Authentication & Onboarding:**
 - **`/onboarding`**: Employee Onboarding - Password change form for first-time employee login (temp password → new password). Protected route for employees with `needs_onboarding: true`.

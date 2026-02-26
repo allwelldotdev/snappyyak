@@ -1,4 +1,4 @@
-# .agent Directory
+# .agents Directory
 
 This directory contains comprehensive documentation for AI agents and developers working on the SnappyYak Core application. All documentation is designed to provide context, standards, and guidelines for maintaining code quality and consistency.
 
@@ -6,7 +6,7 @@ This directory contains comprehensive documentation for AI agents and developers
 
 ### For AI Agents
 **Start here in this order:**
-1. **[AGENTS.md](./AGENTS.md)** - Your primary instruction manual with tech stack, critical rules, and workflows
+1. **[AGENTS.md](../AGENTS.md)** - Skills index, rule pointers, and tech stack summary
 2. **[project_overview.md](./project_overview.md)** - High-level understanding of the project
 3. **[architecture.md](./architecture.md)** - System architecture and file structure
 4. **[current_status.md](./current_status.md)** - Latest implementation status and pending work
@@ -16,18 +16,18 @@ This directory contains comprehensive documentation for AI agents and developers
 1. **[project_overview.md](./project_overview.md)** - Understand what SnappyYak is and the tech stack
 2. **[development_guide.md](./development_guide.md)** - Setup instructions and common commands
 3. **[architecture.md](./architecture.md)** - Learn the system structure
-4. **[AGENTS.md](./AGENTS.md)** - Coding standards and best practices
+4. **[AGENTS.md](../AGENTS.md)** - Skills index and project rules
 
 ## 📁 Directory Structure
 
 ```
-.agent/
+.agents/
 ├── README.md                    # This file - directory guide
-├── AGENTS.md                    # AI agent instructions & critical rules
 ├── project_overview.md          # Project introduction & tech stack
 ├── architecture.md              # System architecture & file structure
 ├── current_status.md            # Implementation status & recent changes
 ├── development_guide.md         # Setup & development workflow
+├── skills/                      # Agent skills (SKILL.md per skill)
 ├── SOP/                         # Standard Operating Procedures
 │   ├── frontend_design_system.md     # Design system rules (MANDATORY)
 │   └── backend_authentication_guide.md  # Backend auth implementation guide
@@ -35,19 +35,20 @@ This directory contains comprehensive documentation for AI agents and developers
     └── auth_migration.md        # Example: Auth system migration notes
 ```
 
+Note: `AGENTS.md` now lives at the repo root (`../AGENTS.md`).
+
 ## 📖 File Descriptions
 
 ### Core Documentation
 
 #### **AGENTS.md** 🤖
 **Purpose**: Primary instruction file for AI agents  
+**Location**: `../AGENTS.md`  
 **Contains**:
-- Complete tech stack (Rust/Axum backend, Next.js frontend)
-- Critical coding rules and conventions
-- Security guidelines (Argon2id, JWT, input validation)
-- File naming conventions
-- Common task workflows
-- Documentation update requirements
+- Tech stack summary (backend, frontend, desktop agent)
+- Skills index and core rule pointers
+- Skill storage conventions
+- Documentation update workflow (see `.agents/skills/docs-update-protocol`)
 
 **When to read**: Before starting any coding task
 
@@ -155,19 +156,20 @@ This directory contains comprehensive documentation for AI agents and developers
 ## 🎯 Use Cases
 
 ### "I need to add a new API endpoint"
-1. Read: **AGENTS.md** (Backend section)
-2. Read: **SOP/backend_authentication_guide.md** (for auth-related endpoints)
-3. Reference: **architecture.md** (Backend Architecture)
-4. Update: **current_status.md** when done
+1. Read: **AGENTS.md** (skills index)
+2. Use: **backend-endpoint-workflow** skill
+3. Read: **SOP/backend_authentication_guide.md** (for auth-related endpoints)
+4. Reference: **architecture.md** (Backend Architecture)
+5. Update: **current_status.md** when done
 
 ### "I need to create a new UI component"
 1. Read: **SOP/frontend_design_system.md** (MANDATORY)
-2. Read: **AGENTS.md** (Frontend section, Styling section)
+2. Use: **design-system-guardrails** skill
 3. Reference: **architecture.md** (Component structure)
 4. Update: **current_status.md** when done
 
 ### "I need to modify the database schema"
-1. Read: **AGENTS.md** (Database Schema Changes section)
+1. Use: **diesel-migration-workflow** skill
 2. Read: **development_guide.md** (Database Commands)
 3. Update: **architecture.md** if structure changes
 4. Update: **current_status.md** when done
@@ -211,7 +213,7 @@ This directory contains comprehensive documentation for AI agents and developers
 ### Update Checklist
 Before completing any task, ask:
 - [ ] Have I updated `current_status.md`?
-- [ ] Do any rules in `AGENTS.md` need updating?
+- [ ] Do any skills or rules in `AGENTS.md` need updating?
 - [ ] Has the architecture changed? (update `architecture.md`)
 - [ ] Are setup instructions still accurate? (check `development_guide.md`)
 - [ ] Should this be documented in `implementations/`?
@@ -220,7 +222,7 @@ Before completing any task, ask:
 
 ## 🚨 Critical Reminders
 
-1. **ALWAYS read `AGENTS.md` before coding** - It contains critical rules
+1. **ALWAYS read `AGENTS.md` before coding** - It contains skills and rule pointers
 2. **ALWAYS read `SOP/frontend_design_system.md` before UI work** - It's mandatory
 3. **ALWAYS update `current_status.md` and `AGENTS.md` after significant work** - Keep it current
 4. **NEVER skip documentation updates** - Future you (and others) will thank you

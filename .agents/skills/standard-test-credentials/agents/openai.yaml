@@ -1,0 +1,4 @@
+interface:
+  display_name: "Standard Test Credentials"
+  short_description: "Use standard test accounts"
+  default_prompt: "Use -test-credentials when testing login or signup."
