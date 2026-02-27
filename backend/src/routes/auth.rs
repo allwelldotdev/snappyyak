@@ -1,6 +1,7 @@
 use crate::auth::{create_jwt, AuthUser};
 use crate::db::DbPool;
 use crate::models::{NewUser, User};
+use crate::schema::employer_employees::dsl as employer_employees_dsl;
 use crate::schema::users;
 use argon2::{
     password_hash::{
@@ -176,6 +177,28 @@ pub async fn login(
 
     if Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
         if let (Some(id), Some(email), Some(fullname), Some(role)) = (user_id, user_email, user_fullname, user_role) {
+            if role == "employee" {
+                let employee_id = id.unwrap();
+                let statuses = employer_employees_dsl::employer_employees
+                    .filter(employer_employees_dsl::employee_id.eq(employee_id))
+                    .select(employer_employees_dsl::status)
+                    .load::<String>(&mut conn)
+                    .map_err(|e| {
+                        (
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                            Json(json!({ "error": e.to_string() })),
+                        )
+                    })?;
+
+                let has_active_relationship = statuses.iter().any(|status| status != "deactivated");
+
+                if !has_active_relationship {
+                    return Err((
+                        StatusCode::FORBIDDEN,
+                        Json(json!({ "error": "This account has been deactivated" })),
+                    ));
+                }
+            }
             let token = create_jwt(id.unwrap(), email, role, needs_onb).map_err(|e| {
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
@@ -217,6 +240,29 @@ pub async fn me(
         })?;
 
     if let Some(user) = user {
+        // Deactivation guard for employees
+        if user.role == "employee" {
+            let statuses = employer_employees_dsl::employer_employees
+                .filter(employer_employees_dsl::employee_id.eq(user.id.unwrap()))
+                .select(employer_employees_dsl::status)
+                .load::<String>(&mut conn)
+                .map_err(|e| {
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        Json(json!({ "error": e.to_string() })),
+                    )
+                })?;
+
+            let has_active_relationship = statuses.iter().any(|status| status != "deactivated");
+
+            if !has_active_relationship {
+                return Err((
+                    StatusCode::FORBIDDEN,
+                    Json(json!({ "error": "This account has been deactivated" })),
+                ));
+            }
+        }
+
         let needs_onboarding = user.role == "employee" && user.password.is_none();
         return Ok(Json(json!({
             "user": {

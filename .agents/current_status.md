@@ -13,6 +13,13 @@
 
 ## Recently Completed
 
+- **Deactivation Guard Bugfix** (`backend/src/routes/auth.rs`):
+  - **Root cause**: `GET /api/auth/me` returned HTTP 200 for all authenticated employees irrespective of deactivation status. A deactivated unonboarded employee with a stale or freshly-issued JWT could load the app, receive `needs_onboarding: true`, and be routed to `/onboarding` — bypassing the existing deactivation checks in `POST /api/auth/login` and `POST /api/onboarding/complete`.
+  - **Fix**: Added a deactivation guard to the `me()` handler. After fetching the user, if `role == "employee"`, the endpoint queries all rows in `employer_employees` for that `employee_id` and checks their `status` values. If every relationship is `"deactivated"`, it returns HTTP 403 `{ "error": "This account has been deactivated" }`.
+  - **Multi-employer exception**: The guard uses `.any(|s| s != "deactivated")` — if at least one employer still has the employee as `"pending"` or `"active"`, access is allowed. Only a fully-deactivated employee (across all employers) is blocked.
+  - **Frontend behaviour**: No frontend changes required. The existing `AuthProvider` `.catch()` already clears `localStorage` and nulls the user state on any `/me` failure, returning the user to `/auth`. The error banner on `auth/page.tsx` surfaces the backend message verbatim.
+  - **Verified**: End-to-end browser tests confirmed deactivated login is blocked, employer login is unaffected, and active employee onboarding completes successfully.
+
 - **Documentation & Skills**:
   - Moved `AGENTS.md` to repo root and updated references across docs.
   - Added `docs-update-protocol` skill under `.agents/skills/`.
@@ -197,6 +204,16 @@
   - Warning banner about one-time password display.
   - "Done" button closes modal and redirects to `/employer`.
 - **AuthProvider Enhancement**: Added `token` to AuthContext for API calls.
+- **Auth / Onboarding Guardrail Fixes**:
+  - Employee login now blocked when all employer relationships are `deactivated` (returns "This account has been deactivated").
+  - Employee onboarding (`/api/onboarding/complete`) now rejects deactivated-only relationships.
+  - Employer employee list only shows metrics for active relationships.
+  - Employee metrics sync now requires at least one active employer relationship.
+- **Desktop Agent Session Reset**:
+  - Clearing local metrics cache on login to prevent previous session data from syncing for a newly logged-in employee.
+  - Login now hydrates today's local baseline from backend employee metrics before sync, preventing same-user relogin from overwriting prior same-day totals.
+- **Desktop Agent SOP**:
+  - Added `.agents/SOP/desktop_agent_operations.md` covering login guardrails, metrics cache hygiene, sync eligibility, tray actions, and manual time rules.
 - **Auth & Onboarding Layouts**:
   - Implemented shared `AuthLayout` (`app/auth/layout.tsx`) for consistent branding.
   - Updated `OnboardingLayout` to match Auth design (Logo placement, background decoration).

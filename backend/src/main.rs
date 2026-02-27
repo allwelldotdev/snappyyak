@@ -34,6 +34,7 @@ async fn main() {
         .route("/api/onboarding/complete", post(routes::onboarding::complete_onboarding))
         // Employee routes
         .route("/api/employee/metrics/sync", post(routes::employee::sync_metrics))
+        .route("/api/employee/metrics/:date", get(routes::employee::get_metrics_for_date))
         .layer(CorsLayer::permissive())
         .with_state(pool);
 

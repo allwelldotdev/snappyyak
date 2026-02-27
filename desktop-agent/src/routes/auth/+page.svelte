@@ -4,6 +4,7 @@
 
     let email = $state("");
     let password = $state("");
+    let showPassword = $state(false);
     let errorMessage = $state("");
     let loading = $state(false);
 
@@ -46,16 +47,66 @@
 
             <div class="input-group">
                 <label for="password">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    bind:value={password}
-                    required
-                    placeholder="Enter password"
-                />
+                <div class="password-field">
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        bind:value={password}
+                        required
+                        placeholder="Enter password"
+                    />
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        onclick={() => (showPassword = !showPassword)}
+                        aria-label={showPassword
+                            ? "Hide password"
+                            : "Show password"}
+                    >
+                        {#if showPassword}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                                />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        {:else}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"
+                                />
+                                <path
+                                    d="M14.084 14.158a3 3 0 0 1-4.242-4.242"
+                                />
+                                <path
+                                    d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"
+                                />
+                                <path d="m2 2 20 20" />
+                            </svg>
+                        {/if}
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" disabled={loading}>
+            <button type="submit" class="login-button" disabled={loading}>
                 {loading ? "Authenticating..." : "Login"}
             </button>
         </form>
@@ -77,7 +128,9 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        min-width: 100vw;
         padding: 2rem;
+        box-sizing: border-box;
     }
 
     .login-box {
@@ -140,6 +193,47 @@
         font-size: 0.875rem;
     }
 
+    .password-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .password-field input {
+        padding-right: 3.25rem;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: #9ca3af;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 9999px;
+    }
+
+    .toggle-password:focus {
+        outline: none;
+    }
+
+    .toggle-password:hover {
+        color: #f3f4f6;
+    }
+
+    .toggle-password svg {
+        width: 20px;
+        height: 20px;
+    }
+
     input:focus {
         outline: none;
         border-color: #ea580c; /* brand-orange */
@@ -158,7 +252,7 @@
         transition: background-color 0.2s;
     }
 
-    button:hover:not(:disabled) {
+    .login-button:hover:not(:disabled) {
         background-color: #c2410c;
     }
 

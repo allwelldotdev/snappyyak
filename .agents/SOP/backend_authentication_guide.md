@@ -68,7 +68,8 @@ backend/src/
   2. Find user by email
   3. Verify against password or temp_password
   4. Calculate needs_onboarding (employee with null password)
-  5. Generate JWT with role and needs_onboarding
+  5. If role is `employee`, verify at least one employer relationship is not `deactivated`; otherwise reject with `{ "error": "This account has been deactivated" }`
+  6. Generate JWT with role and needs_onboarding
 - **Output**: `{ token: string, user: { id, email, fullname, role, needs_onboarding } }`
 
 #### GET /api/auth/me
@@ -76,8 +77,13 @@ backend/src/
 - **Process**:
   1. Extract JWT from header
   2. Validate signature and expiration
-  3. Return user info with role and onboarding status
+  3. Fetch user record from `users` table
+  4. **Deactivation guard (employees only)**: Query `employer_employees` for all statuses linked to this employee. If *every* relationship status is `"deactivated"`, reject with `{ "error": "This account has been deactivated" }` (HTTP 403). If at least one relationship is `"pending"` or `"active"`, allow through (multi-employer exception).
+  5. Calculate `needs_onboarding` (`role == employee && password IS NULL`)
+  6. Return user info with role and onboarding status
 - **Output**: `{ user: { id, email, fullname, role, needs_onboarding } }`
+- **Error (deactivated employee)**: `403 { "error": "This account has been deactivated" }` — frontend `AuthProvider` clears the token on this response and returns the user to `/auth`
+
 
 #### POST /api/auth/change-password
 - **Headers**: `Authorization: Bearer <token>`
@@ -126,9 +132,10 @@ backend/src/
   1. Verify temp_password
   2. Validate new_password (min 8 chars)
   3. Hash new password
-  4. Update user (set password, clear temp_password)
-  5. Update employer_employees junction status to 'active'
-  6. Return new JWT with needs_onboarding: false
+  4. If all employer relationships are `deactivated`, reject with `{ "error": "This account has been deactivated" }`
+  5. Update user (set password, clear temp_password)
+  6. Update employer_employees junction status to 'active' (pending relationships only)
+  7. Return new JWT with needs_onboarding: false
 - **Output**: `{ message: "Onboarding complete", token: string }`
 
 ### Frontend Integration

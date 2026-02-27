@@ -271,7 +271,11 @@ pub async fn list_employees(
     let employees: Vec<EmployeeWithRelationship> = results
         .into_iter()
         .map(|(rel, user)| {
-            let user_metrics = metrics.iter().find(|m| m.user_id == user.id.unwrap());
+            let user_metrics = if rel.status == "active" {
+                metrics.iter().find(|m| m.user_id == user.id.unwrap())
+            } else {
+                None
+            };
             
             EmployeeWithRelationship {
                 id: user.id.unwrap(),

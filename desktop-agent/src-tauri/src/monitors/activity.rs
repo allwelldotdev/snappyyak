@@ -30,7 +30,7 @@ impl ActivityMonitor {
 // macOS native event tap using core-graphics and core-foundation FFI
 #[cfg(target_os = "macos")]
 fn run_macos_event_tap(k_count: Arc<AtomicU64>, m_count: Arc<AtomicU64>) {
-    use core_foundation::runloop::{CFRunLoop, CFRunLoopSource};
+    use core_foundation::runloop::CFRunLoop;
     use core_graphics::event::{CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType, CGEventTap};
     
     // Using core_graphics crate

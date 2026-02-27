@@ -358,6 +358,7 @@ CREATE TABLE IF NOT EXISTS settings (
 ```
 
 **`settings` table** stores key/value pairs, primarily the `jwt_token` after a successful employee login, persisted across restarts.
+The local `metrics_cache` is cleared on login to avoid syncing metrics from a prior user session.
 
 **Purpose**:
 - Offline resilience: metrics accumulate locally even when the backend is unreachable
@@ -485,6 +486,8 @@ Content-Type: application/json
 }
 ```
 The backend performs an **upsert** (insert or update) on `employee_metrics` keyed by `(user_id, date)`.
+Sync is accepted only if the employee has at least one active employer relationship; deactivated-only relationships are rejected.
+On desktop-agent login, local cache is rebuilt from `GET /api/employee/metrics/:date` so same-day totals continue for the same employee while still preventing cross-user cache leakage.
 
 **Logging**:
 - `env_logger` is initialised in `lib.rs`. Run with `RUST_LOG=info` to see sync activity in the terminal.
@@ -503,7 +506,7 @@ The backend performs an **upsert** (insert or update) on `employee_metrics` keye
 - **Status Indicator**: Shows active tracking status
 - **Quick Actions**:
   - Pause/Resume tracking
-  - Take manual break
+  - Add manual time
   - Open detailed view
   - Settings
 
@@ -586,13 +589,14 @@ The backend performs an **upsert** (insert or update) on `employee_metrics` keye
 - [x] Local SQLite storage (`storage.rs`) with `metrics_cache` and `settings` tables
 - [x] API client (`api_client.rs`) using `reqwest` + `rustls-tls` (no OpenSSL)
 - [x] Employee-only login via Tauri `login` command; JWT persisted in SQLite
+- [x] Login blocks employees with only deactivated employer relationships; onboarding requires at least one non-deactivated employer relationship
 - [x] Route guard in `+layout.svelte` redirects unauthenticated users to `/auth`
 - [x] Background Tokio sync task: accumulates data, pushes to backend every 60s
 - [x] `env_logger` logging for terminal monitoring of sync events
 - [x] Backend `POST /api/employee/metrics/sync` endpoint with JWT auth + upsert
 - [x] Employer dashboard (`/employer/employees`) displays live synced metrics
 - [x] Verified memory footprint of ~40.9MB on macOS during active tracking
-- [ ] System tray UI (macOS menu bar)
+- [x] System tray UI (macOS menu bar)
 
 **Windows Development (Next)**:
 - [ ] Port activity monitoring to Windows (SetWindowsHookEx)

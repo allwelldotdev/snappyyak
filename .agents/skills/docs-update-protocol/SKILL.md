@@ -24,5 +24,6 @@ Keep documentation accurate after meaningful code changes. Apply this workflow w
 - `.agents/project_overview.md`: If core features or tech stack change.
 - `.agents/SOP/frontend_design_system.md`: If design system changes.
 - `.agents/SOP/backend_authentication_guide.md`: If auth implementation changes.
+- `.agents/SOP/desktop_agent_operations.md`: If desktop agent auth, sync, tray UI, or local storage behavior changes.
 - `README.md`: If setup instructions or features change.
 - `AGENTS.md`: If rules or workflows change.

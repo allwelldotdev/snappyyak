@@ -121,6 +121,7 @@ pub struct SyncMetricsRequest {
     pub date: chrono::NaiveDate,
     pub work_time_minutes: Option<i32>,
     pub computer_activity_minutes: Option<i32>,
+    pub manual_time_minutes: Option<i32>,
     pub productive_minutes: Option<i32>,
     pub unproductive_minutes: Option<i32>,
     pub neutral_minutes: Option<i32>,

@@ -219,7 +219,7 @@ export default function ActiveEmployeesPage() {
                         <table className="border-collapse text-sm text-left w-full">
                             <thead className="bg-white sticky top-0 z-20">
                                 <tr>
-                                    <th className="sticky left-0 bg-white z-20 p-4 font-medium text-gray-500 border-b border-gray-100 border-r border-gray-100 min-w-[250px] whitespace-nowrap shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                                    <th className="sticky left-0 bg-white z-20 p-4 font-medium text-gray-500 border-b  border-r border-gray-100 min-w-[250px] whitespace-nowrap shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
                                         Employee Name
                                     </th>
                                     {COLUMN_DEFINITIONS.map(col => visibleColumns[col.key] && (

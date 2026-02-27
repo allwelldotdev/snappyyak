@@ -71,6 +71,7 @@ A privacy-first workforce productivity platform. The system is composed of a **R
 ### Features
 - **JWT-based Auth**: Secure session management using JSON Web Tokens.
 - **Role-Based Access**: Employers and Employees have separate dashboards and API permissions.
+- **Relationship Guardrails**: Employees must have at least one active employer relationship to log in, onboard, or sync metrics.
 - **SQLite Database**: Local persistence using Diesel ORM.
 - **Desktop Agent Sync**: Employee metrics collected locally and synced via batched REST POST.
 
@@ -115,6 +116,7 @@ A privacy-first workforce productivity platform. The system is composed of a **R
 3. First login redirects to **Onboarding** (`/onboarding`).
 4. Set permanent password → redirected to **Employee Dashboard** (`/dashboard`).
 5. Subsequent logins go directly to Employee Dashboard.
+6. If all employer relationships are deactivated, login and onboarding are blocked.
 
 ---
 

@@ -59,6 +59,26 @@ pub async fn complete_onboarding(
             ));
         }
 
+        let statuses = employer_employees::table
+            .filter(employer_employees::employee_id.eq(user.id.unwrap()))
+            .select(employer_employees::status)
+            .load::<String>(&mut conn)
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(json!({ "error": e.to_string() })),
+                )
+            })?;
+
+        let has_active_relationship = statuses.iter().any(|status| status != "deactivated");
+
+        if !has_active_relationship {
+            return Err((
+                StatusCode::FORBIDDEN,
+                Json(json!({ "error": "This account has been deactivated" })),
+            ));
+        }
+
         // Verify temp password
         let temp_password_hash = user.temp_password.as_deref().ok_or((
              StatusCode::INTERNAL_SERVER_ERROR,

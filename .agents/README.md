@@ -30,7 +30,8 @@ This directory contains comprehensive documentation for AI agents and developers
 ├── skills/                      # Agent skills (SKILL.md per skill)
 ├── SOP/                         # Standard Operating Procedures
 │   ├── frontend_design_system.md     # Design system rules (MANDATORY)
-│   └── backend_authentication_guide.md  # Backend auth implementation guide
+│   ├── backend_authentication_guide.md  # Backend auth implementation guide
+│   └── desktop_agent_operations.md      # Desktop agent operations guide
 └── implementations/             # Past implementation records
     └── auth_migration.md        # Example: Auth system migration notes
 ```

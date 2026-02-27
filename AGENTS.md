@@ -28,6 +28,17 @@
 ## Project Structure & Architecture
 See `.agents/architecture.md` for the full, up-to-date structure and routing overview.
 
+## Plans (ExecPlans)
+When writing complex features or significant refactors, use an ExecPlan (as described in `.agents/PLANS.md`) from design to implementation.
+
+Treat the terms **"ExecPlan"**, **"execution plan"**, and **"implementation plan"** as synonyms in this repo.
+
+When the user asks for any of the above, you MUST:
+1) follow the process and formatting rules in `.agents/PLANS.md`, and
+2) write the plan to `.agents/implementations/.codex/<Plan Name>.md` (creating directories if needed).
+
+If the request says "make a plan" but does not specify which kind, assume it means an **ExecPlan** and follow `.agents/PLANS.md`.
+
 ## Skill Storage Convention
 - All Agent Skills MUST be created under: `.agents/skills/<skill-name>/SKILL.md`
 - The skill name MUST be kebab-case and MUST match the directory name exactly.

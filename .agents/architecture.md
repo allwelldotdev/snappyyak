@@ -101,6 +101,7 @@ The application uses **Next.js App Router** for client-side routing.
   - `role: employer` → `/employer`
   - `role: employee` + `needs_onboarding: true` → `/onboarding` (first-time)
   - `role: employee` + `needs_onboarding: false` → `/dashboard` (returning)
+- **Deactivation guard**: If an employee's every `employer_employees` relationship is `"deactivated"`, the backend returns HTTP 403 at both `POST /api/auth/login` and `GET /api/auth/me`. The frontend `AuthProvider` clears the token and routes the user back to `/auth` with the error message displayed. A deactivated employee linked to multiple employers is only blocked if *all* relationships are deactivated.
 - Route protection enforced via `useRequireAuth` hook.
 
 ## Design System Implementation
@@ -128,7 +129,7 @@ The backend is a standalone **Rust** application using the **Axum** framework.
   - **Authentication** (`routes/auth.rs`):
     - `POST /api/auth/signup`: Create employer account.
     - `POST /api/auth/login`: Authenticate user (supports password or temp_password).
-    - `GET /api/auth/me`: Validate session token (returns role and onboarding status).
+    - `GET /api/auth/me`: Validate session token. For employees, also checks `employer_employees` junction — if all relationships are `"deactivated"`, returns HTTP 403 `"This account has been deactivated"` before returning any session data. Otherwise returns role and onboarding status.
     - `POST /api/auth/change-password`: Update user password (requires valid JWT).
   - **Employee Management** (`routes/employer.rs`):
     - `POST /api/employer/employees`: Add new employee with junction table relationship (auto-generates temp password).
@@ -140,6 +141,8 @@ The backend is a standalone **Rust** application using the **Axum** framework.
     - `POST /api/onboarding/complete`: Complete employee onboarding (verify temp password, set new password, update junction status to 'active').
   - **Employee Sync** (`routes/employee.rs`):
     - `POST /api/employee/metrics/sync`: Upsert today's aggregated metrics for the authenticated employee. Requires `role: employee` JWT. Performs `INSERT OR REPLACE` on `employee_metrics`.
+    - Sync is accepted only when the employee has at least one active employer relationship; deactivated-only relationships are rejected.
+    - `GET /api/employee/metrics/:date`: Returns the authenticated employee's metrics for a specific date (zero defaults if none).
 
 ## Integration
 - The Frontend and Desktop Agent communicate with the Backend via HTTP to `http://localhost:8080`.

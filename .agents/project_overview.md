@@ -54,6 +54,7 @@ The frontend is a Next.js application using the App Router pattern, running on p
   - **Colors**: Brand orange (#EA580C), dark (#132326)
   - **Typography**: Instrument Sans (headings), Satoshi (body & UI)
 - **Authentication**: Full JWT-based signup/login flow with protected routes.
+- **Relationship Guardrails**: Employees must have at least one active employer relationship to log in, onboard, or sync metrics.
 - **Desktop Agent Sync**: Employee metrics collected locally and synced to the backend.
 - **Auth Enhancements**: 
     - Placeholder 'Forgot Password' flow with email input and success states.
