@@ -1,8 +1,7 @@
 'use client';
 
-import { useAuth } from '@/components/providers/AuthProvider';
-import { useRouter, usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRequireAuth } from '@/components/providers/useRequireAuth';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Users, CalendarDays, Briefcase, CloudDownload, Settings } from 'lucide-react';
 import { UserMenu } from '@/components/dashboard/UserMenu';
@@ -12,15 +11,8 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { user, logout, loading } = useAuth();
-    const router = useRouter();
+    const { user, loading } = useRequireAuth();
     const pathname = usePathname();
-
-    useEffect(() => {
-        if (!loading && !user) {
-            router.push('/auth');
-        }
-    }, [user, loading, router]);
 
     if (loading || !user) {
         return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-brand-dark">Loading...</div>;
@@ -39,7 +31,6 @@ export default function DashboardLayout({
                         { href: '/dashboard/time', label: 'Time and Attendance', icon: CalendarDays },
                         { href: '/dashboard/projects', label: 'Projects', icon: Briefcase },
                         { href: '/dashboard/download', label: 'Download', icon: CloudDownload },
-                        { href: '/dashboard/settings', label: 'Settings', icon: Settings },
                     ].map((link) => {
                         const Icon = link.icon;
                         const isActive = link.href === pathname || (link.href !== '/dashboard' && pathname.startsWith(link.href)) || (link.href === '/dashboard' && pathname.startsWith('/dashboard/employees/'));

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Updates"
+  short_description: "Keep docs updated after changes"
+  default_prompt: "Use -update-protocol to update documentation after code changes."

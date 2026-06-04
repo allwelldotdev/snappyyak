@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses custom fonts loaded via CDN: **Satoshi** (Fontshare) for body/UI text and **Instrument Sans** (Google Fonts) for headings. See `.agent/SOP/frontend_design_system.md` for the complete design system.
+This project uses custom fonts loaded via CDN: **Satoshi** (Fontshare) for body/UI text and **Instrument Sans** (Google Fonts) for headings. See `.agents/SOP/frontend_design_system.md` for the complete design system.
 
 ## Learn More
 

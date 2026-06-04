@@ -1,0 +1,4 @@
+interface:
+  display_name: "Backend Endpoint Workflow"
+  short_description: "Rust/Axum endpoint checklist"
+  default_prompt: "Use -endpoint-workflow to add or update a backend API endpoint."

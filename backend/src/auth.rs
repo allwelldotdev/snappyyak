@@ -20,9 +20,11 @@ pub struct Claims {
     pub sub: String, // email
     pub exp: usize,
     pub user_id: i32,
+    pub role: String,
+    pub needs_onboarding: bool,
 }
 
-pub fn create_jwt(user_id: i32, email: &str) -> Result<String, jsonwebtoken::errors::Error> {
+pub fn create_jwt(user_id: i32, email: &str, role: &str, needs_onboarding: bool) -> Result<String, jsonwebtoken::errors::Error> {
     let secret = env::var("JWT_SECRET").expect("JWT_SECRET must be set");
     let expiration = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -34,6 +36,8 @@ pub fn create_jwt(user_id: i32, email: &str) -> Result<String, jsonwebtoken::err
         sub: email.to_owned(),
         exp: expiration,
         user_id,
+        role: role.to_owned(),
+        needs_onboarding,
     };
 
     encode(
@@ -45,6 +49,7 @@ pub fn create_jwt(user_id: i32, email: &str) -> Result<String, jsonwebtoken::err
 
 pub struct AuthUser {
     pub user_id: i32,
+    pub role: String,
 }
 
 #[async_trait]
@@ -71,6 +76,7 @@ where
 
         Ok(AuthUser {
             user_id: token_data.claims.user_id,
+            role: token_data.claims.role,
         })
     }
 }

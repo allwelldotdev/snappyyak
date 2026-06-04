@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, post},
+    routing::{get, patch, post},
     Router,
 };
 use dotenvy::dotenv;
@@ -21,11 +21,20 @@ async fn main() {
     let pool = db::establish_connection(&database_url);
 
     let app = Router::new()
-        .route("/api/auth/signup", post(routes::signup))
-        .route("/api/auth/login", post(routes::login))
-        .route("/api/auth/me", get(routes::me))
-        .route("/api/auth/update-profile", post(routes::update_profile))
-        .route("/api/auth/change-password", post(routes::change_password))
+        .route("/api/auth/signup", post(routes::auth::signup))
+        .route("/api/auth/login", post(routes::auth::login))
+        .route("/api/auth/me", get(routes::auth::me))
+        .route("/api/auth/update-profile", post(routes::auth::update_profile))
+        .route("/api/auth/change-password", post(routes::auth::change_password))
+        // Employer routes
+        .route("/api/employer/employees", post(routes::employer::add_employee).get(routes::employer::list_employees))
+        .route("/api/employer/employees/:id", get(routes::employer::get_employee).delete(routes::employer::delete_employee))
+        .route("/api/employer/employees/:id/status", patch(routes::employer::update_employee_status))
+        // Onboarding routes
+        .route("/api/onboarding/complete", post(routes::onboarding::complete_onboarding))
+        // Employee routes
+        .route("/api/employee/metrics/sync", post(routes::employee::sync_metrics))
+        .route("/api/employee/metrics/:date", get(routes::employee::get_metrics_for_date))
         .layer(CorsLayer::permissive())
         .with_state(pool);
 

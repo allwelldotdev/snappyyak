@@ -72,140 +72,125 @@ function AuthContent() {
     };
 
     return (
-        <div className="min-h-screen bg-bg-main flex flex-col font-body">
-            <nav className="p-6 absolute top-0 left-0 w-full z-10">
-                <Container>
-                    <Logo />
-                </Container>
-            </nav>
-
-            <div className="flex-grow flex items-center justify-center p-4 pt-20">
-                <div className="bg-white w-full max-w-[480px] rounded-[30px] shadow-2xl overflow-hidden border border-gray-100">
-                    <div className="p-8 sm:p-12">
-                        <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold font-heading text-brand-dark mb-3">
-                                {mode === 'login' ? 'Welcome back' : 'Start your free trial'}
-                            </h1>
-                            <p className="text-text-body text-lg">
-                                {mode === 'login'
-                                    ? 'Enter your details to access your dashboard.'
-                                    : 'Join 10,000+ teams boosting productivity.'}
-                            </p>
-                            {error && (
-                                <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
-                                    {error}
-                                </div>
-                            )}
+        <div className="bg-white w-full max-w-[480px] rounded-[30px] shadow-2xl overflow-hidden border border-gray-100">
+            <div className="p-8 sm:p-12">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold font-heading text-brand-dark mb-3">
+                        {mode === 'login' ? 'Welcome back' : 'Start your free trial'}
+                    </h1>
+                    <p className="text-text-body text-lg">
+                        {mode === 'login'
+                            ? 'Enter your details to access your dashboard.'
+                            : 'Join 10,000+ teams boosting productivity.'}
+                    </p>
+                    {error && (
+                        <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
+                            {error}
                         </div>
+                    )}
+                </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {mode === 'signup' && (
-                                <div>
-                                    <label className="block text-sm font-medium text-brand-dark mb-2">Full Name</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={fullname}
-                                        onChange={(e) => setFullname(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
-                                        placeholder="John Doe"
-                                    />
-                                </div>
-                            )}
-                            <div>
-                                <label className="block text-sm font-medium text-brand-dark mb-2">Email Address</label>
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
-                                    placeholder="name@company.com"
-                                    autoFocus
-                                    ref={emailRef}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-brand-dark mb-2">Password</label>
-                                <div className="relative">
-                                    <input
-                                        type={showPassword ? "text" : "password"}
-                                        required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
-                                        placeholder="••••••••"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
-                                    >
-                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {mode === 'login' && (
-                                <div className="flex justify-end -mt-4">
-                                    <Link href="/auth/forgot-password" className="text-brand-orange text-sm font-medium hover:underline">
-                                        Forgot password?
-                                    </Link>
-                                </div>
-                            )}
-
-                            <Button fullWidth size="lg" disabled={isLoading}>
-                                {isLoading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
-                            </Button>
-                        </form>
-
-                        {mode === 'signup' && (
-                            <div className="mt-8 space-y-3">
-                                <div className="flex items-center gap-2 text-sm text-text-muted justify-center">
-                                    <CheckCircle2 className="w-4 h-4 text-brand-orange" />
-                                    <span>No credit card required</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-text-muted justify-center">
-                                    <CheckCircle2 className="w-4 h-4 text-brand-orange" />
-                                    <span>14-day free trial</span>
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="mt-8 relative flex items-center justify-center">
-                            <div className="absolute inset-0 border-t border-gray-100 top-1/2"></div>
-                            <span className="relative bg-white px-3 text-sm text-text-muted font-medium uppercase">or</span>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {mode === 'signup' && (
+                        <div>
+                            <label className="block text-sm font-medium text-brand-dark mb-2">Full Name</label>
+                            <input
+                                type="text"
+                                required
+                                value={fullname}
+                                onChange={(e) => setFullname(e.target.value)}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
+                                placeholder="John Doe"
+                            />
                         </div>
-
-                        <div className="mt-8 flex gap-4">
-                            <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-lg text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors">
-                                <GoogleLogo className="w-5 h-5" />
-                                {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
+                    )}
+                    <div>
+                        <label className="block text-sm font-medium text-brand-dark mb-2">Email Address</label>
+                        <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
+                            placeholder="name@company.com"
+                            autoFocus
+                            ref={emailRef}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-brand-dark mb-2">Password</label>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all"
+                                placeholder="••••••••"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                            >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                             </button>
-                            <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-lg text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors">
-                                <SlackLogo className="w-5 h-5" />
-                                {mode === 'login' ? 'Sign in with Slack' : 'Sign up with Slack'}
-                            </button>
-                        </div>
-
-                        <div className="mt-8 pt-8 border-t border-gray-100 text-center">
-                            <p className="text-text-muted">
-                                {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
-                                <button
-                                    onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                                    className="text-brand-orange font-medium hover:underline"
-                                >
-                                    {mode === 'login' ? 'Sign up' : 'Log in'}
-                                </button>
-                            </p>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            {/* Background decoration */}
-            <div className="fixed top-0 left-0 w-full h-full -z-10 bg-[#FAF9F6]">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-orange opacity-5 blur-[120px] rounded-full"></div>
+                    {mode === 'login' && (
+                        <div className="flex justify-end -mt-4">
+                            <Link href="/auth/forgot-password" className="text-brand-orange text-sm font-medium hover:underline">
+                                Forgot password?
+                            </Link>
+                        </div>
+                    )}
+
+                    <Button fullWidth size="lg" disabled={isLoading}>
+                        {isLoading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
+                    </Button>
+                </form>
+
+                {mode === 'signup' && (
+                    <div className="mt-8 space-y-3">
+                        <div className="flex items-center gap-2 text-sm text-text-muted justify-center">
+                            <CheckCircle2 className="w-4 h-4 text-brand-orange" />
+                            <span>No credit card required</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-text-muted justify-center">
+                            <CheckCircle2 className="w-4 h-4 text-brand-orange" />
+                            <span>14-day free trial</span>
+                        </div>
+                    </div>
+                )}
+
+                <div className="mt-8 relative flex items-center justify-center">
+                    <div className="absolute inset-0 border-t border-gray-100 top-1/2"></div>
+                    <span className="relative bg-white px-3 text-sm text-text-muted font-medium uppercase">or</span>
+                </div>
+
+                <div className="mt-8 flex gap-4">
+                    <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-lg text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors">
+                        <GoogleLogo className="w-5 h-5" />
+                        {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
+                    </button>
+                    <button className="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-lg text-sm font-medium text-brand-dark hover:bg-gray-50 transition-colors">
+                        <SlackLogo className="w-5 h-5" />
+                        {mode === 'login' ? 'Sign in with Slack' : 'Sign up with Slack'}
+                    </button>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-gray-100 text-center">
+                    <p className="text-text-muted">
+                        {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
+                        <button
+                            onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                            className="text-brand-orange font-medium hover:underline"
+                        >
+                            {mode === 'login' ? 'Sign up' : 'Log in'}
+                        </button>
+                    </p>
+                </div>
             </div>
         </div>
     );

@@ -1,0 +1,261 @@
+# Current Status
+
+## Implemented Features
+- **Architecture Migration**: Successfully migrated from Hono/Vite to Rust/Next.js.
+- **Frontend (Next.js)**:
+  - **Design Restoration**: Fully restored premium design (colors, fonts, components).
+  - **Pages**: Home, Auth, and Dashboard implemented with App Router.
+  - **Auth Integration**: Client-side `AuthProvider` manages JWT storage and session state.
+- **Backend (Rust/Axum)**:
+  - **API**: Functional endpoints for `signup`, `login`, and `me`.
+  - **Database**: SQLite integration via Diesel with migrations.
+  - **Security**: Type-safe request handling, Argon2id password hashing, input sanitization, and JSON error responses.
+
+## Recently Completed
+
+- **Deactivation Guard Bugfix** (`backend/src/routes/auth.rs`):
+  - **Root cause**: `GET /api/auth/me` returned HTTP 200 for all authenticated employees irrespective of deactivation status. A deactivated unonboarded employee with a stale or freshly-issued JWT could load the app, receive `needs_onboarding: true`, and be routed to `/onboarding` — bypassing the existing deactivation checks in `POST /api/auth/login` and `POST /api/onboarding/complete`.
+  - **Fix**: Added a deactivation guard to the `me()` handler. After fetching the user, if `role == "employee"`, the endpoint queries all rows in `employer_employees` for that `employee_id` and checks their `status` values. If every relationship is `"deactivated"`, it returns HTTP 403 `{ "error": "This account has been deactivated" }`.
+  - **Multi-employer exception**: The guard uses `.any(|s| s != "deactivated")` — if at least one employer still has the employee as `"pending"` or `"active"`, access is allowed. Only a fully-deactivated employee (across all employers) is blocked.
+  - **Frontend behaviour**: No frontend changes required. The existing `AuthProvider` `.catch()` already clears `localStorage` and nulls the user state on any `/me` failure, returning the user to `/auth`. The error banner on `auth/page.tsx` surfaces the backend message verbatim.
+  - **Verified**: End-to-end browser tests confirmed deactivated login is blocked, employer login is unaffected, and active employee onboarding completes successfully.
+
+- **Documentation & Skills**:
+  - Moved `AGENTS.md` to repo root and updated references across docs.
+  - Added `docs-update-protocol` skill under `.agents/skills/`.
+  - Added skills index and skill storage guidance in `AGENTS.md`.
+  - Added `backend-endpoint-workflow` and `frontend-page-workflow` skills; updated `AGENTS.md` to reference them.
+  - Renamed `.agent/` to `.agents/` and updated references across docs.
+  - Added `design-system-guardrails`, `diesel-migration-workflow`, `auth-session-rules`, and `standard-test-credentials` skills; updated `AGENTS.md` to reference them.
+  - Trimmed `AGENTS.md` to focus on skills and link to `.agents` docs for detailed guidance.
+  - Updated `.agents/README.md` use cases to reference skills; aligned `GEMINI.md` desktop agent status.
+  - Updated `README.md`, `GEMINI.md`, `.agents/project_overview.md`, and `.agents/development_guide.md` for skills-first documentation links.
+- **Desktop Agent — Phase 1 Complete (macOS)**:
+  - **Authentication**: Employee-only login via Tauri `login` command. JWT stored in local SQLite `settings` table and reloaded across restarts. Employer logins are rejected with an error. Route guard in `+layout.svelte` redirects unauthenticated users to `/auth`.
+  - **Activity Monitoring**: Keyboard and mouse events counted using macOS CGEvent API (`monitors/activity.rs`). Active application tracked via NSWorkspace (`monitors/app_usage.rs`).
+  - **Local SQLite Storage** (`storage.rs`): `metrics_cache` table stores per-day aggregated metrics. `settings` table stores the JWT across restarts. Implemented with `rusqlite` (bundled).
+  - **API Client** (`api_client.rs`): `reqwest` + `rustls-tls` (no OpenSSL) for minimal binary size. Handles login and `sync_metrics` POST requests with `Authorization` header.
+  - **Background Batched Sync Loop**: Tokio task spawned on startup. Ticks every 60 seconds, drains atomic activity counters, increments SQLite cache, and POSTs a summary to `POST /api/employee/metrics/sync`. Fails gracefully offline (data stays in SQLite).
+  - **Logging**: `env_logger` initialized; `log::info!` on activity detection and sync success; `log::error!` on sync failure. Run with `RUST_LOG=info`.
+  - **Backend Sync Endpoint**: `POST /api/employee/metrics/sync` in `routes/employee.rs` (employee JWT required). Performs upsert on `employee_metrics` keyed by `(user_id, date)`.
+  - **Employer Dashboard Metrics**: Updated `list_employees` in `routes/employer.rs` to join `employee_metrics` for today's date, format minutes as `HH:MM` strings, and include them in the `GET /api/employer/employees` response.
+  - **End-to-End Verified**: Browser test confirmed `00:23` work/computer-activity minutes displayed for John Doe on the Employer Dashboard after desktop agent sync. Memory footprint measured at ~40.9MB on macOS.
+- **Migration & Schema Alignment**:
+  - Fixed broken migrations for `employer_employees` and `employee_metrics` by adding missing SQL definitions.
+  - Synchronized `backend/src/schema.rs` with SQLite's primary key handling by marking them as `Nullable<Integer>`.
+  - Verified database reset and migration flow with `diesel database reset`.
+- **Employer Dashboard Improvements**:
+  - Corrected navigation links in `AddEmployeePage` to point to `/employer/employees` instead of `/employer`.
+  - Replaced legacy "Insightful" branding with "SnappyYak" in the `AddEmployeeModal` description.
+- **Global Design Updates**:
+  - Updated Satoshi font import URLs in `globals.css` and `layout.tsx` to use `fonts.cdnfonts.com`.
+  - Ensured consistent font loading across all dashboard pages.
+
+- **Unified Settings Route Refactoring**:
+  - Moved Personal Settings from `/dashboard/settings` to `/settings` for role-agnostic access.
+  - Implemented role-based layout wrapper in `/settings/layout.tsx` that dynamically wraps content in `EmployerLayout` or `DashboardLayout` based on user role.
+  - Updated `UserMenu.tsx` to link to `/settings/info` instead of `/dashboard/settings`.
+  - Removed "Settings" link from Employee dashboard sidebar (no longer needed).
+  - Personal Settings now maintains consistent functionality while being cleanly separated from dashboard-specific navigation.
+
+- **Downloads Page**:
+  - Implemented `/dashboard/download` page for OS-specific installation file downloads.
+  - Centered card UI with Windows, macOS, and Linux download options.
+  - Custom SVG icons for each OS (Windows logo, Apple logo, Linux Tux).
+  - BETA badge on Linux download option.
+  - Violet-themed download buttons with hover effects.
+- **Time and Attendance Dashboard**:
+  - Implemented `ManualTimePage` with control toolbar (date picker, filter) and empty state data table.
+  - Implemented `SchedulesPage` with highly customized data table:
+    - Sticky headers for vertical scrolling and sticky "Employee Name" column for horizontal scrolling.
+    - Custom styling for sticky columns (borders, shadows).
+    - Link navigation from employee names to details page (`/dashboard/employees/[id]`).
+  - Updated `TimeAttendanceLayout` to conditionally hide view toggles for Manual and Schedules pages.
+- **Security Upgrade**: Migrated from bcrypt to Argon2id for password hashing.
+- **Input Validation**: Added email validation and input trimming on auth endpoints.
+- **Error Handling**: Fixed frontend JSON parsing errors by ensuring all backend errors return proper JSON format.
+- **Design Consistency**: Corrected font loading to ensure Satoshi is active across the application.
+- **Auth User Experience**: Implemented auto-focus for the email field on initial load and mode toggling.
+- **Brand Consistency**: Created a reusable `Logo` component and unified its appearance across the landing page and authentication screens.
+- **Dashboard UI Refinements**:
+  - Replaced `<a>` tags with Next.js `<Link>` components for client-side routing.
+  - Implemented interactive `UserMenu` component with popup modal for user settings.
+  - Added nested Organization sub-menu with hover interactions.
+  - Repositioned user profile from header to sidebar bottom for cleaner layout.
+  - Fixed hover "dead zone" issue with padding-based bridge for smooth menu interactions.
+- **Password Change Functionality**:
+  - Implemented secure password change endpoint (`POST /api/auth/change-password`).
+  - Backend validates current password with Argon2id before hashing and updating new password.
+  - Frontend Personal Settings page with password change form, visibility toggles, and validation.
+- **Dashboard Layout Refactoring**:
+  - Created shared `dashboard/layout.tsx` to house sidebar and navigation consistently.
+  - Implemented dynamic active state highlighting for sidebar links using `usePathname()`.
+  - All dashboard pages now inherit layout automatically (Settings, Overview, etc.).
+- **Personal Settings Page**:
+  - Full-featured settings page under `/dashboard/settings` route.
+  - Password change form with client-side validation and server integration.
+  - Placeholder sections for Social Accounts and Two-Factor Authentication.
+- **UI Polish & Consistency**:
+  - Password toggle visibility in both auth page and settings page.
+  - Consistent padding/margin across all dashboard pages.
+  - Strict adherence to `brand-orange` and `brand-dark` color scheme (removed `brand-purple`).
+  - Active sidebar highlighting correctly reflects current page.
+- **Auth Enhancements**:
+  - Implemented 'Forgot Password' placeholder flow with email input and success state using `forgot-password/page.tsx`.
+  - Added "Forgot password?" link to the main login form.
+  - Integrated generic OAuth buttons (Google & Slack) with specific UI styling (white bg, border) to the login/signup pages.
+  - Refactored "Edit Columns" modal to a right-aligned Popover in the Employees dashboard for better UX.
+  - Implemented functional column toggling using React state to dynamically show/hide table columns.
+  - Optimized table layout: prevented header/cell wrapping with `whitespace-nowrap`, restored specific column widths, and fixed horizontal stretching issues by removing hardcoded `min-w`.
+  - Introduced **Shadcn UI** (Radix-based) for advanced UI components like Popovers, maintaining design consistency with the brand theme.
+- **Dependency Cleanup**:
+  - Removed unused `framer-motion` and `class-variance-authority` npm dependencies.
+  - Deleted unused `Modal.tsx` component (not imported anywhere).
+- **DateRangePicker Redesign**:
+  - Updated layout with CALENDAR header and "Employees' Time Zone" dropdown with globe icon.
+  - Added "Preset Filters" sidebar with 9 options (Today, Yesterday, This Week, Last 7 Days, etc.).
+  - Implemented active preset highlighting with violet background.
+  - Styled Cancel/Apply buttons with violet theme (border and filled variants).
+- **Settings Layout Padding Fix**:
+  - Removed fixed height constraints from `settings/layout.tsx` to allow natural content flow.
+  - Content now respects parent padding without excessive whitespace.
+- **Employee Details Page**:
+  - Created dynamic route `/dashboard/employees/[id]` matching the design mockups.
+  - Implemented `EmptyState` component with custom CSS/SVG illustration (sleepy computer).
+  - Added header with employee meta-data (Team, Email) and tabbed navigation (Timesheets, Schedules, Projects).
+  - Implemented view toggles (Day/Shift) and filter controls.
+  - Linked employee names in the dashboard table to their respective details pages.
+- **Employee Details Refactoring**:
+  - Refactored `/dashboard/employees/[id]` to use nested layout pattern.
+  - Created `employees/[id]/layout.tsx` for shared header (breadcrumbs, employee info, tabs).
+  - Converted tabs to route-based navigation using Next.js `Link` components.
+  - Restructured `page.tsx` to contain only Timesheets-specific content.
+  - Implemented `schedules/page.tsx` with calendar grid, controls toolbar, and legend.
+- **Schedules Page**:
+  - Implemented calendar grid with 7-column layout (Sun-Sat) and 210px minimum column width.
+  - Added horizontal scrolling with proper overflow structure (outer clips, inner scrolls).
+  - Styled date cells with dimmed previous/next month dates and bold current month dates.
+  - Created legend for "Shifts" (purple) and "Time Off" (gray).
+  - Replicated controls toolbar from Timesheets (date picker and filter button).
+- **Dashboard Navigation**:
+  - Made "SnappyYak" logo in sidebar a clickable link routing to `/dashboard`.
+  - Added slim right border to sticky column cells in Employees table.
+- **Projects Page**:
+  - Implemented `projects/page.tsx` under Employee detail routes.
+  - Added "Today" date picker trigger, empty state message, and Projects Dashboard card.
+  - Dashboard includes Total Time and Utilization stat cards with CSS bar chart.
+  - Chart section expands to fill available vertical space using `flex-1`.
+- **Layout Fixes**:
+  - Updated `EmployeeLayout` to `min-h-full` for proper content overflow behavior.
+  - Fixed Schedules page calendar grid gap by making scrollable wrapper a flex container.
+  - Ensured both Projects and Schedules pages properly fill their containers.
+- **Documentation**:
+  - Standard test credentials are documented in `.agents/skills/standard-test-credentials/SKILL.md`.
+  - Updated employer test credentials to use `dev@example.com` / `password123` as primary.
+- **Projects Dashboard**:
+  - Implemented `/dashboard/projects` with tabbed navigation ("Insightful" and "Integrated").
+  - **Insightful View**:
+    - Data table with fixed "Project Name" column (250px).
+    - Controls toolbar (Date Picker, Search).
+    - empty state component.
+    - "Task Statuses" info banner.
+  - **Integrated View**:
+    - Route: `/dashboard/projects/integrated`.
+    - Centered empty state without table structure.
+    - Inherits layouts and controls.
+- **Role-Based Authentication System**:
+  - **Database**: Added `role`, `temp_password` fields to users table. Made `password` nullable for new employees.
+  - **Backend Refactoring**: Organized routes into modular structure (`routes/auth.rs`, `routes/employer.rs`, `routes/onboarding.rs`).
+  - **Employer Endpoints**: Implemented employee management (`POST /add`, `GET /list`, `GET /:id`, `DELETE /:id`). Auto-generates secure temporary passwords.
+  - **Onboarding Flow**: Implemented `POST /api/onboarding/complete` for employees to set permanent password.
+  - **Frontend**: Updated `AuthProvider` with role-based redirects. Created `useRequireAuth` hook for route protection. Implemented `/employer` and `/onboarding` pages with role-specific layouts.
+  - **Employer Dashboard**:
+    - Implemented custom sidebar with specific navigation items (Productivity Trends, Real-Time Insights, Alerts, Employees, etc.).
+    - Added "Reports" dropdown with collapsible submenu.
+    - Built main dashboard page with:
+      - **Header**: "Productivity Trends" title with "Add New Employee" button and notification bell icon.
+      - **Period Controls**: Reference and Compared period selectors with `ArrowRightLeft` exchange icon, styled with indigo theme.
+      - **Add Filter Button**: Positioned in left controls for quick access.
+      - **Empty State**: Uses shared `EmptyState` component with custom messaging.
+    - Refined layout with optimized spacing (`items-start` alignment, reduced gaps).
+    - Updated date format to "Jan 26, 2026" style for period displays.
+  - **JWT Updates**: Enhanced JWT payload with `role` and `needs_onboarding` fields for granular access control.
+  - **Verification**: Both backend (`cargo check`) and frontend (`npm run build`) compile successfully.
+- **Add Employee Modal**:
+  - Created `AddEmployeeModal` component (`components/employer/AddEmployeeModal.tsx`) with:
+    - Centered backdrop modal with header and X close button.
+    - "Choose Your Employee's Computer Type" selection screen.
+    - Two interactive cards: "Company Computers" and "Personal Computers".
+    - Help link with question icon and billing info banner.
+    - Card selection state with indigo highlight.
+    - **Navigation**: "Personal Computers" card navigates to `/employer/employees/add`.
+  - Integrated modal into employer dashboard, triggered by "Add New Employee" button.
+- **Add Employee Page** (`employer/employees/add/page.tsx`):
+  - Form with Full Name and Email Address fields.
+  - **Auto-focus**: Full Name field focuses automatically on load.
+  - API integration with `POST /api/employer/employees`.
+  - Loading state with spinner during submission.
+  - Error handling with red error banner display.
+  - Cancel button to return to employer dashboard.
+- **TempPasswordDisplay Component** (`components/employer/TempPasswordDisplay.tsx`):
+  - Success modal with green checkmark icon.
+  - Displays employee email and generated temp password.
+  - Copy-to-clipboard button with visual feedback (checkmark on copy).
+  - Warning banner about one-time password display.
+  - "Done" button closes modal and redirects to `/employer`.
+- **AuthProvider Enhancement**: Added `token` to AuthContext for API calls.
+- **Auth / Onboarding Guardrail Fixes**:
+  - Employee login now blocked when all employer relationships are `deactivated` (returns "This account has been deactivated").
+  - Employee onboarding (`/api/onboarding/complete`) now rejects deactivated-only relationships.
+  - Employer employee list only shows metrics for active relationships.
+  - Employee metrics sync now requires at least one active employer relationship.
+- **Desktop Agent Session Reset**:
+  - Clearing local metrics cache on login to prevent previous session data from syncing for a newly logged-in employee.
+  - Login now hydrates today's local baseline from backend employee metrics before sync, preventing same-user relogin from overwriting prior same-day totals.
+- **Desktop Agent SOP**:
+  - Added `.agents/SOP/desktop_agent_operations.md` covering login guardrails, metrics cache hygiene, sync eligibility, tray actions, and manual time rules.
+- **Auth & Onboarding Layouts**:
+  - Implemented shared `AuthLayout` (`app/auth/layout.tsx`) for consistent branding.
+  - Updated `OnboardingLayout` to match Auth design (Logo placement, background decoration).
+- **Employee Database Integration**:
+  - **Backend**:
+    - Updated `schema.rs`: Fixed primary key types from `Nullable<Integer>` to `Integer`.
+    - Added `employer_employees` junction table for many-to-many relationship with `status` field (`pending`, `active`, `deactivated`).
+    - Added `employee_metrics` table for future metrics tracking.
+    - Rewrote `routes/employer.rs`:
+      - `POST /api/employer/employees`: Creates employee and junction relationship.
+      - `GET /api/employer/employees?status={status}`: Lists employees filtered by relationship status.
+      - `PATCH /api/employer/employees/:id/status`: Updates employee status for deactivation workflow.
+    - Updated `routes/onboarding.rs`: Sets junction table status to `active` upon onboarding completion.
+  - **Frontend**:
+    - Created `EmployeeActionsMenu` component: Three-dot dropdown menu with deactivation workflow and confirmation.
+    - Implemented `/employer/employees` (Active): Fetches active employees, displays metrics, search filtering, column toggles.
+    - Implemented `/employer/employees/pending` (Pending): Shows employees awaiting onboarding with "Invitation Sent" badge.
+    - Implemented `/employer/employees/deactivated` (Deactivated): Lists deactivated employees with muted styling and "Deactivated" badge.
+    - All pages include loading states, error handling, and empty state components.
+  - **Verified**: End-to-end workflow tested in browser — adding employees, viewing by status, and deactivation all working correctly.
+
+
+
+## Pending / Future Work
+- **Security Enhancements**:
+  - Implement refresh tokens.
+  - Add request rate limiting.
+  - Tighter CORS configuration for production.
+  - Implement actual OAuth logic (currently placeholders).
+  - Implement actual email sending for password reset.
+- **Desktop Agent — Next Steps**:
+  - Windows port (SetWindowsHookEx activity monitoring, WebView2 config).
+  - Application categorization engine (productive / unproductive / neutral).
+  - Idle time detection and deliberate break tracking.
+  - Screenshot capture and upload pipeline.
+  - System tray / menu bar UI.
+  - Increase sync interval to 5–10 min for production battery efficiency.
+- **Features**:
+  - Email verification (placeholder exists).
+- **Infrastructure & UI**:
+  - Dockerize applications for easier deployment.
+  - Set up CI/CD pipelines.
+
+## Recently Completed (Security Audit)
+- **Timing Attack Fix**: Refactored login endpoint to use constant-time password verification, preventing user enumeration.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auth Session Rules"
+  short_description: "JWT session and auth rules"
+  default_prompt: "Use -session-rules to apply SnappyYak auth session rules."
